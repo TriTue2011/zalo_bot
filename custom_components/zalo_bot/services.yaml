@@ -1,0 +1,64 @@
+send_message:
+  description: Gửi tin nhắn Zalo
+  fields:
+    message:
+      description: Nội dung tin nhắn
+      example: "Hello từ Home Assistant"
+      required: true
+      selector:
+        text:
+    thread_id:
+      description: ThreadId nhận tin nhắn (user hoặc group)
+      example: "5841349563795164131"
+      required: true
+      selector:
+        text:
+    account_selection:
+      description: Số điện thoại tài khoản gửi
+      example: "0764343466"
+      required: true
+      selector:
+        text:
+    type:
+      description: "Loại gửi: 0=user, 1=group (mặc định 0)"
+      example: 0
+      default: 0
+      selector:
+        select:
+          options:
+            - label: "User"
+              value: 0
+            - label: "Group"
+              value: 1
+send_image:
+  description: Gửi ảnh Zalo
+  fields:
+    image_path:
+      description: Đường dẫn file ảnh trên Home Assistant
+      example: "/config/www/img.png"
+      required: true
+      selector:
+        text:
+    thread_id:
+      description: ThreadId nhận ảnh (user hoặc group)
+      example: "5841349563795164131"
+      required: true
+      selector:
+        text:
+    account_selection:
+      description: Số điện thoại tài khoản gửi
+      example: "0764343466"
+      required: true
+      selector:
+        text:
+    type:
+      description: "Loại gửi: 0=user, 1=group (mặc định 0)"
+      example: 0
+      default: 0
+      selector:
+        select:
+          options:
+            - label: "User"
+              value: 0
+            - label: "Group"
+              value: 1

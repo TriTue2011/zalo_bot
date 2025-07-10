@@ -1,0 +1,9 @@
+{
+  "domain": "zalo_bot",
+  "name": "Zalo Bot",
+  "version": "1.0.0",
+  "requirements": ["requests"],
+  "codeowners": [],
+  "documentation": "https://github.com/your-repo/zalo-bot-ha",
+  "config_flow": true
+}
