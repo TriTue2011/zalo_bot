@@ -19,24 +19,33 @@ https://github.com/smarthomeblack/zalo_bot
 ```
 Chọn loại: Integration.
 
-![Thêm repo vào HACS](img/1.png)
+<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/1.png" width="100%"></img>
 
 ### 2. Cài đặt và cấu hình bộ tích hợp
 
-Sau khi thêm repo, tìm kiếm "Zalo Bot" trong HACS và cài đặt.
+- Sau khi thêm repo, tìm kiếm "Zalo Bot" trong HACS và cài đặt rồi khởi động lại Hass.
 
-Vào Cài đặt > Thiết bị & Dịch vụ > Thêm tích hợp mới > Chọn "Zalo Bot" và cấu hình theo hướng dẫn.
+- Vào Cài đặt > Thiết bị & Dịch vụ > Thêm tích hợp mới > Chọn "Zalo Bot" và cấu hình theo hướng dẫn.
 
-![Cấu hình bộ tích hợp](img/2.png)
+<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/2.png" width="100%"></img>
 
 ### 3. Cài đặt thủ công
 
 Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
-1. Tải mã nguồn repo này về máy.
-2. Sao chép thư mục `custom_components/zalo_bot` vào thư mục `custom_components` trong thư mục cấu hình Home Assistant của bạn.
-3. Khởi động lại Home Assistant.
-4. Vào Cài đặt > Thiết bị & Dịch vụ > Thêm tích hợp mới > Chọn "Zalo Bot" và cấu hình theo hướng dẫn.
+- Tải mã nguồn repo này về máy.
+- Sao chép thư mục `custom_components/zalo_bot` vào thư mục `custom_components` trong thư mục cấu hình Home Assistant của bạn.
+- Khởi động lại Home Assistant.
+- Vào Cài đặt > Thiết bị & Dịch vụ > Thêm tích hợp mới > Chọn "Zalo Bot" và cấu hình theo hướng dẫn.
+
+### 3. Cấu hình
+
+- Nếu cài Server Zalo Bot bằng Addon thì mặc định zalo_server để nguyên
+- user và pass điền admin
+
+<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/3.png" width="100%"></img>
+
+<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/4.png" width="100%"></img>
 
 ## Đóng góp
 Mọi đóng góp, báo lỗi hoặc ý tưởng mới đều được hoan nghênh qua GitHub Issues hoặc Pull Request.
