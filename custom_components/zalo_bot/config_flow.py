@@ -9,14 +9,13 @@ CONF_SERVER = "zalo_server"
 
 class ZaloBotConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Zalo Bot."""
-
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is not None:
-            return self.async_create_entry(title="Zalo Bot Server", data=user_input)
+            return self.async_create_entry(title="Zalo Bot", data=user_input)
 
         data_schema = vol.Schema({
             vol.Required(CONF_SERVER, default="http://localhost:3000"): str,

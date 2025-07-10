@@ -1,9 +1,9 @@
 {
   "domain": "zalo_bot",
   "name": "Zalo Bot",
-  "version": "1.0.0",
+  "version": "2025.7.11",
   "requirements": ["requests"],
   "codeowners": [],
-  "documentation": "https://github.com/your-repo/zalo-bot-ha",
+  "documentation": "https://github.com/smarthomeblack/zalo-bot",
   "config_flow": true
 }

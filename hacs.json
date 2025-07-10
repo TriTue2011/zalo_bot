@@ -1,0 +1,6 @@
+{
+  "name": "Zalo Bot",
+  "country": ["VN"],
+  "homeassistant": "2024.1.0",
+  "hacs": "1.0.0"
+}

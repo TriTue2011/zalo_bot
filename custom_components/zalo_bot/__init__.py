@@ -10,7 +10,6 @@ import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
 WEBHOOK_ID = "zalo_bot_webhook"
-# Đường dẫn tới thư mục www của Home Assistant
 WWW_DIR = "/config/www"
 PUBLIC_DIR = os.path.join(WWW_DIR, "zalo_bot")
 
@@ -102,7 +101,6 @@ async def async_setup_entry(hass, entry):
             await hass.async_add_executor_job(zalo_login)
             msg_type = call.data.get("type", 0)
             image_path = call.data["image_path"]
-            # Nếu là URL (http/https) thì không copy vào public, dùng luôn link
             if image_path.startswith("http://") or image_path.startswith("https://"):
                 public_url = image_path
             else:
@@ -138,10 +136,10 @@ async def async_setup_entry(hass, entry):
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, "zalo_bot")},
-        manufacturer="Zalo",
-        name="Zalo Bot Server",
+        manufacturer="Smarthome Black",
+        name="Zalo Bot",
         model="MultiZLogin",
-        sw_version="1.0"
+        sw_version="2025.7.11"
     )
     return True
 
