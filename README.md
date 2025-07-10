@@ -56,6 +56,44 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
 <img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/5.png" width="100%"></img>
 
+### 5. Hướng Dẫn Tạo Hội Thoại Và Tự Động Hóa
+
+- Video hướng dẫn: <video src="img/zalobot.mp4" controls width="100%"></video>
+
+- code
+
+```yaml
+alias: zalo bot
+description: ""
+triggers:
+  - allowed_methods:
+      - POST
+      - PUT
+    local_only: true
+    webhook_id: "-kckRb3xuIlUYoMHgbwIwPMKq"
+    trigger: webhook
+conditions:
+  - condition: template
+    value_template: >
+      {{ '@TenZaloBot' in trigger.json.data.content and trigger.json.data.dName ==
+      'TenZaloBan' }}
+actions:
+  - variables:
+      user_message: "{{ trigger.json.data.content }}"
+  - data:
+      text: "{{ user_message }}"
+      agent_id: conversation.google_generative_ai_2
+    response_variable: convo_response
+    action: conversation.process
+  - data:
+      message: "{{ convo_response.response.speech.plain.speech }}"
+      thread_id: "Id hội thoại"
+      account_selection: "SĐT của Bot"
+      type: 1
+    action: zalo_bot.send_message
+mode: single
+```
+
 ## Đóng góp
 Mọi đóng góp, báo lỗi hoặc ý tưởng mới đều được hoan nghênh qua GitHub Issues hoặc Pull Request.
 
