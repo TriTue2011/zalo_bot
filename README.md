@@ -19,7 +19,7 @@ https://github.com/smarthomeblack/zalo_bot
 ```
 Chọn loại: Integration.
 
-<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/1.png" width="100%"></img>
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/1.png" width="100%"></img>
 
 ### 2. Cài đặt và cấu hình bộ tích hợp
 
@@ -27,7 +27,7 @@ Chọn loại: Integration.
 
 - Vào Cài đặt > Thiết bị & Dịch vụ > Thêm tích hợp mới > Chọn "Zalo Bot" và cấu hình theo hướng dẫn.
 
-<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/2.png" width="100%"></img>
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/2.png" width="100%"></img>
 
 ### 3. Cài đặt thủ công
 
@@ -43,9 +43,18 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 - Nếu cài Server Zalo Bot bằng Addon thì mặc định zalo_server để nguyên
 - user và pass điền admin
 
-<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/3.png" width="100%"></img>
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/3.png" width="100%"></img>
 
-<img title="EVNVN VN" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/4.png" width="100%"></img>
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/4.png" width="100%"></img>
+
+### 4. Hướng Dẫn Sử Dụng
+- Có 2 dịch vụ chính để dùng tự động hóa là zalo_bot.send_image và zalo_bot.send_message
+- Vào trang quản lý ZALO BOT, Chọn Theo dõi tin nhắn và lấy Thread ID 
+- Sau đó dùng tài khoản bất kỳ gửi tin nhắn cho Acc Bot hoặc thêm Acc bot vào trong 1 nhóm, sau đó gửi tin nhắn từ tài khoản chính vào nhóm
+- Dùng Thread ID để điền vào cấu hình tự động hóa, như gửi ảnh, gửi tin nhắn
+- Nếu gửi cho tài khoản cá nhân thì type để user, còn gửi vào trong nhóm thì type để Group
+
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/5.png" width="100%"></img>
 
 ## Đóng góp
 Mọi đóng góp, báo lỗi hoặc ý tưởng mới đều được hoan nghênh qua GitHub Issues hoặc Pull Request.
