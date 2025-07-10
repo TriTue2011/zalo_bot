@@ -138,7 +138,7 @@ async def async_setup_entry(hass, entry):
         identifiers={(DOMAIN, "zalo_bot")},
         manufacturer="Smarthome Black",
         name="Zalo Bot",
-        model="MultiZLogin",
+        model="Zalo Bot",
         sw_version="2025.7.11"
     )
     return True
