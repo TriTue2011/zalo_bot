@@ -58,7 +58,7 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
 ### 5. Hướng Dẫn Tạo Hội Thoại Và Tự Động Hóa
 
-- Video hướng dẫn: <video src="img/zalobot.mp4" controls width="100%"></video>
+- [▶️ Xem video hướng dẫn](img/zalobot.mp4)
 
 - code
 
