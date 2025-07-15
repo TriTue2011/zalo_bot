@@ -2,7 +2,7 @@
 
 ## Giới thiệu
 
-Dự án này cung cấp một bot Zalo tích hợp cho Home Assistant, giúp bạn gửi, nhận thông báo và điều khiển thiết bị qua Zalo một cách tiện lợi.
+Dự án này cung cấp một bot Zalo tích hợp cho Home Assistant, giúp bạn gửi, nhận thông báo và điều khiển thiết bị qua Zalo một cách tiện lợi!
 
 ## Tính năng
 - Nhận thông báo từ Home Assistant qua Zalo
