@@ -11,25 +11,13 @@ Dự án này cung cấp một bot Zalo tích hợp cho Home Assistant, giúp b�
 
 ## Hướng dẫn cài đặt
 
-### 1. Thêm repo vào HACS
+### 1. Cài đặt qua HACS(Khuyến nghị)
 
-Vào HACS > Integrations > Ba chấm góc phải > Custom repositories, thêm đường dẫn repo:
-```
-https://github.com/smarthomeblack/zalo_bot
-```
-Chọn loại: Integration.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=smarthomeblack&repository=zalo_bot)
 
-<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/1.png" width="100%"></img>
+- Tải về sau đó khởi động lại Home Assistant
 
-### 2. Cài đặt và cấu hình bộ tích hợp
-
-- Sau khi thêm repo, tìm kiếm "Zalo Bot" trong HACS và cài đặt rồi khởi động lại Hass.
-
-- Vào Cài đặt > Thiết bị & Dịch vụ > Thêm tích hợp mới > Chọn "Zalo Bot" và cấu hình theo hướng dẫn.
-
-<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/2.png" width="100%"></img>
-
-### 3. Cài đặt thủ công
+### 2. Cài đặt thủ công
 
 Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
