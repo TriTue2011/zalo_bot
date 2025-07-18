@@ -1,3 +1,9 @@
+## ❓ Nhóm Support:
+- Zalo: https://zalo.me/g/alvkgn274
+- Telegram: https://t.me/smarthomeblack
+
+---
+
 # Zalo Bot cho Home Assistant
 
 ## Giới thiệu
