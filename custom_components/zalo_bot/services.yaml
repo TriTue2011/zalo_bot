@@ -62,3 +62,322 @@ send_image:
               value: 0
             - label: "Group"
               value: 1
+
+get_logged_accounts:
+  description: Lấy danh sách tài khoản Zalo đã login
+  fields: {}
+
+get_account_details:
+  description: Lấy chi tiết một tài khoản Zalo
+  fields:
+    own_id:
+      description: Own ID của tài khoản
+      example: "123456789"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+find_user:
+  description: Tìm user bằng số điện thoại
+  fields:
+    phone:
+      description: Số điện thoại
+      example: "0123456789"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+get_user_info:
+  description: Lấy thông tin user
+  fields:
+    user_id:
+      description: User ID
+      example: "987654321"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+send_friend_request:
+  description: Gửi lời mời kết bạn
+  fields:
+    user_id:
+      description: User ID
+      example: "987654321"
+      required: false
+      default: ""
+      selector: { text: {} }
+    message:
+      description: Tin nhắn mời
+      example: "Xin chào!"
+      default: "Xin chào, hãy kết bạn với tôi!"
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+create_group:
+  description: Tạo group mới
+  fields:
+    members:
+      description: Danh sách members (comma-separated)
+      example: "user1,user2"
+      required: false
+      default: ""
+      selector: { text: {} }
+    name:
+      description: Tên group
+      example: "My Group"
+      required: false
+      default: ""
+      selector: { text: {} }
+    avatar_path:
+      description: Đường dẫn avatar
+      example: "http://example.com/avatar.png"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+get_group_info:
+  description: Lấy info group
+  fields:
+    group_id:
+      description: Group ID (comma-separated for multiple)
+      example: "group123"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+add_user_to_group:
+  description: Thêm thành viên vào group
+  fields:
+    group_id:
+      description: Group ID
+      example: "group123"
+      required: false
+      default: ""
+      selector: { text: {} }
+    member_id:
+      description: Member ID (comma-separated for multiple)
+      example: "user1,user2"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+remove_user_from_group:
+  description: Xóa thành viên khỏi group
+  fields:
+    group_id:
+      description: Group ID
+      example: "group123"
+      required: false
+      default: ""
+      selector: { text: {} }
+    member_id:
+      description: Member ID (comma-separated for multiple)
+      example: "user1,user2"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+send_image_to_user:
+  description: Gửi 1 ảnh đến user
+  fields:
+    image_path:
+      description: Đường dẫn ảnh
+      example: "/config/www/img.png"
+      required: false
+      default: ""
+      selector: { text: {} }
+    thread_id:
+      description: Thread ID
+      example: "thread123"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+send_images_to_user:
+  description: Gửi nhiều ảnh đến user
+  fields:
+    image_paths:
+      description: Danh sách paths (comma-separated)
+      example: "path1,path2"
+      required: false
+      default: ""
+      selector: { text: {} }
+    thread_id:
+      description: Thread ID
+      example: "thread123"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+send_image_to_group:
+  description: Gửi 1 ảnh đến group
+  fields:
+    image_path:
+      description: Đường dẫn ảnh
+      example: "/config/www/img.png"
+      required: false
+      default: ""
+      selector: { text: {} }
+    thread_id:
+      description: Thread ID
+      example: "thread123"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+send_images_to_group:
+  description: Gửi nhiều ảnh đến group
+  fields:
+    image_paths:
+      description: Danh sách paths (comma-separated)
+      example: "path1,path2"
+      required: false
+      default: ""
+      selector: { text: {} }
+    thread_id:
+      description: Thread ID
+      example: "thread123"
+      required: false
+      default: ""
+      selector: { text: {} }
+    account_selection:
+      description: Số ĐT hoặc OwnID của bot
+      example: "0764343466"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+get_account_webhooks:
+  description: Lấy tất cả config webhook
+  fields: {}
+
+get_account_webhook:
+  description: Lấy config webhook cho account
+  fields:
+    own_id:
+      description: Own ID
+      example: "123456789"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+set_account_webhook:
+  description: Cập nhật config webhook
+  fields:
+    own_id:
+      description: Own ID
+      example: "123456789"
+      required: false
+      default: ""
+      selector: { text: {} }
+    message_webhook_url:
+      description: URL cho message
+      example: "http://example.com/webhook"
+      required: false
+      default: ""
+      selector: { text: {} }
+    group_event_webhook_url:
+      description: URL cho group event
+      example: "http://example.com/group"
+      required: false
+      default: ""
+      selector: { text: {} }
+    reaction_webhook_url:
+      description: URL cho reaction
+      example: "http://example.com/reaction"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+delete_account_webhook:
+  description: Xóa config webhook
+  fields:
+    own_id:
+      description: Own ID
+      example: "123456789"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+get_proxies:
+  description: Lấy danh sách proxy
+  fields: {}
+
+add_proxy:
+  description: Thêm proxy mới
+  fields:
+    proxy_url:
+      description: URL proxy
+      example: "http://proxy.example.com:8080"
+      required: false
+      default: ""
+      selector: { text: {} }
+
+remove_proxy:
+  description: Xóa proxy
+  fields:
+    proxy_url:
+      description: URL proxy
+      example: "http://proxy.example.com:8080"
+      required: false
+      default: ""
+      selector: { text: {} }
