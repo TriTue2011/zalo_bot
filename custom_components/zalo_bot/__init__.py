@@ -9,11 +9,13 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import voluptuous as vol
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.const import Platform
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from .const import (
     CONF_ENABLE_NOTIFICATIONS,
-    CONF_SERVER_URL,
+    CONF_ZALO_SERVER,
+    CONF_USERNAME,
+    CONF_PASSWORD,
     DEFAULT_ENABLE_NOTIFICATIONS,
     DOMAIN,
 )
@@ -269,14 +271,22 @@ async def async_setup_entry(hass, entry):
     if CONF_ENABLE_NOTIFICATIONS not in config:
         config[CONF_ENABLE_NOTIFICATIONS] = DEFAULT_ENABLE_NOTIFICATIONS
 
-    hass.data[DOMAIN][entry.entry_id] = config
-
     # Khởi tạo session và các biến toàn cục
     global session, zalo_server, WWW_DIR, PUBLIC_DIR
     session = requests.Session()
-    zalo_server = config.get(CONF_SERVER_URL)
-    admin_user = config.get(CONF_USERNAME)
-    admin_pass = config.get(CONF_PASSWORD)
+
+    # Lấy thông tin cấu hình
+    zalo_server = config.get(CONF_ZALO_SERVER)
+    admin_user = config.get(CONF_USERNAME, "admin")
+    admin_pass = config.get(CONF_PASSWORD, "admin")
+
+    # Cập nhật dữ liệu trong hass.data
+    hass.data[DOMAIN][entry.entry_id] = config
+
+    # Kiểm tra xem zalo_server có giá trị không
+    if not zalo_server:
+        _LOGGER.error("Không tìm thấy URL máy chủ Zalo Bot. Vui lòng kiểm tra cấu hình.")
+        return False
 
     # Thiết lập đường dẫn thư mục
     config_dir = hass.config.path()

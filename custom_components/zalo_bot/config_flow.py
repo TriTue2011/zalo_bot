@@ -2,7 +2,16 @@
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
-from .const import DOMAIN, CONF_SERVER_URL, CONF_ENABLE_NOTIFICATIONS, DEFAULT_ENABLE_NOTIFICATIONS
+
+
+from .const import (
+    DOMAIN,
+    CONF_ZALO_SERVER,
+    CONF_USERNAME,
+    CONF_PASSWORD,
+    CONF_ENABLE_NOTIFICATIONS,
+    DEFAULT_ENABLE_NOTIFICATIONS
+)
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -23,7 +32,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema({
-                vol.Required(CONF_SERVER_URL): str,
+                vol.Required(CONF_ZALO_SERVER): str,
+                vol.Required(CONF_USERNAME, default="admin"): str,
+                vol.Required(CONF_PASSWORD, default="admin"): str,
                 vol.Optional(CONF_ENABLE_NOTIFICATIONS, default=DEFAULT_ENABLE_NOTIFICATIONS): bool,
             }),
             errors=errors,
@@ -52,8 +63,16 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema({
                 vol.Required(
-                    CONF_SERVER_URL,
-                    default=self.config_entry.data.get(CONF_SERVER_URL)
+                    CONF_ZALO_SERVER,
+                    default=self.config_entry.data.get(CONF_ZALO_SERVER)
+                ): str,
+                vol.Required(
+                    CONF_USERNAME,
+                    default=self.config_entry.data.get(CONF_USERNAME, "admin")
+                ): str,
+                vol.Required(
+                    CONF_PASSWORD,
+                    default=self.config_entry.data.get(CONF_PASSWORD, "admin")
                 ): str,
                 vol.Optional(
                     CONF_ENABLE_NOTIFICATIONS,
