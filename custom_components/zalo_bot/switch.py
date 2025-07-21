@@ -1,9 +1,9 @@
 """Zalo Bot switches."""
 import logging
-
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -74,6 +74,6 @@ class ZaloBotNotificationSwitch(SwitchEntity):
         )
 
         # Gửi tín hiệu để các thành phần khác biết về thay đổi
-        self.hass.helpers.dispatcher.async_dispatcher_send(
-            SIGNAL_NOTIFICATION_TOGGLE, self._is_on
+        async_dispatcher_send(
+            self.hass, SIGNAL_NOTIFICATION_TOGGLE, self._is_on
         )
