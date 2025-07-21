@@ -27,9 +27,9 @@ send_message:
         select:
           options:
             - label: "User"
-              value: 0
+              value: "0"
             - label: "Group"
-              value: 1
+              value: "1"
 send_image:
   description: Gửi ảnh Zalo
   fields:
@@ -59,9 +59,9 @@ send_image:
         select:
           options:
             - label: "User"
-              value: 0
+              value: "0"
             - label: "Group"
-              value: 1
+              value: "1"
 
 get_logged_accounts:
   description: Lấy danh sách tài khoản Zalo đã login

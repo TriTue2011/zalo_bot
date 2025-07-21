@@ -3,7 +3,6 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 from . import DOMAIN
 
-
 CONF_SERVER = "zalo_server"
 
 
