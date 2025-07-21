@@ -1,33 +1,41 @@
+"""Zalo Bot integration."""
 import logging
 import os
 import shutil
-import requests
-import time
-import http.server
-import socketserver
-import threading
 import socket
-from urllib.parse import quote
-from homeassistant.components import webhook
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import config_validation as cv
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
-from .const import DOMAIN
+import threading
+import time
+import urllib.parse
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import requests
 import voluptuous as vol
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.helpers import config_validation as cv, device_registry as dr
+from .const import (
+    CONF_ENABLE_NOTIFICATIONS,
+    CONF_SERVER_URL,
+    DEFAULT_ENABLE_NOTIFICATIONS,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
-WEBHOOK_ID = "zalo_bot_webhook"
-WWW_DIR = "/config/www"
-PUBLIC_DIR = os.path.join(WWW_DIR, "zalo_bot")
 
 # Định nghĩa CONFIG_SCHEMA để chỉ ra rằng tích hợp này chỉ sử dụng config entry
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
+PLATFORMS = [Platform.SWITCH]
+SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
+
+session = requests.Session()
+zalo_server = None
+WWW_DIR = None
+PUBLIC_DIR = None
+
 
 def find_free_port():
-    """Tìm một cổng trống để sử dụng"""
+    """Tìm một cổng trống."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(('0.0.0.0', 0))
+        s.bind(('', 0))
         return s.getsockname()[1]
 
 
@@ -41,13 +49,13 @@ def serve_file_temporarily(file_path, duration=60):
     """
     # Tạo thư mục ảo với chỉ một tệp
     file_name = os.path.basename(file_path)
-    encoded_filename = quote(file_name)
+    encoded_filename = urllib.parse.quote(file_name)
 
     # Tìm một cổng trống
     port = find_free_port()
 
     # Chuẩn bị máy chủ
-    class SingleFileHandler(http.server.SimpleHTTPRequestHandler):
+    class SingleFileHandler(BaseHTTPRequestHandler):
         def do_GET(self):
             if self.path == f"/{encoded_filename}" or self.path == "/":
                 try:
@@ -78,7 +86,7 @@ def serve_file_temporarily(file_path, duration=60):
             pass
 
     # Tạo máy chủ và chạy trong một thread riêng
-    httpd = socketserver.TCPServer(("0.0.0.0", port), SingleFileHandler)
+    httpd = HTTPServer(("0.0.0.0", port), SingleFileHandler)
 
     # Lấy địa chỉ IP local
     try:
@@ -118,6 +126,24 @@ def serve_file_temporarily(file_path, duration=60):
 # Hàm tiện ích để hiển thị kết quả từ server trong UI
 async def show_result_notification(hass, service_name, resp, error=None):
     try:
+        # Kiểm tra xem thông báo có được bật không
+        notifications_enabled = True
+        for entry_id in hass.data.get(DOMAIN, {}):
+            if CONF_ENABLE_NOTIFICATIONS in hass.data[DOMAIN][entry_id]:
+                notifications_enabled = hass.data[DOMAIN][entry_id][CONF_ENABLE_NOTIFICATIONS]
+                break
+
+        # Nếu thông báo bị tắt, chỉ ghi log và không hiển thị thông báo
+        if not notifications_enabled:
+            if error:
+                _LOGGER.info(f"Thông báo bị tắt. Lỗi khi thực hiện {service_name}: {str(error)}")
+            elif resp:
+                _LOGGER.info(
+                    f"Thông báo bị tắt. Kết quả {service_name}: "
+                    f"{resp.text if hasattr(resp, 'text') else str(resp)}"
+                )
+            return
+
         if error:
             await hass.services.async_call(
                 "persistent_notification",
@@ -235,11 +261,30 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, entry):
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = entry.data
+
+    # Lưu trữ dữ liệu cấu hình từ entry
+    config = dict(entry.data)
+
+    # Đảm bảo có cài đặt enable_notifications
+    if CONF_ENABLE_NOTIFICATIONS not in config:
+        config[CONF_ENABLE_NOTIFICATIONS] = DEFAULT_ENABLE_NOTIFICATIONS
+
+    hass.data[DOMAIN][entry.entry_id] = config
+
+    # Khởi tạo session và các biến toàn cục
+    global session, zalo_server, WWW_DIR, PUBLIC_DIR
     session = requests.Session()
-    zalo_server = entry.data["zalo_server"]
-    admin_user = entry.data[CONF_USERNAME]
-    admin_pass = entry.data[CONF_PASSWORD]
+    zalo_server = config.get(CONF_SERVER_URL)
+    admin_user = config.get(CONF_USERNAME)
+    admin_pass = config.get(CONF_PASSWORD)
+
+    # Thiết lập đường dẫn thư mục
+    config_dir = hass.config.path()
+    WWW_DIR = os.path.join(config_dir, "www")
+    PUBLIC_DIR = os.path.join(WWW_DIR, "zalo_bot")
+
+    # Khởi tạo các platform
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     def zalo_login():
         resp = session.post(f"{zalo_server}/api/login", json={
@@ -251,17 +296,11 @@ async def async_setup_entry(hass, entry):
         else:
             _LOGGER.error("Đăng nhập quản trị viên Zalo thất bại: %s", resp.text)
 
-    async def handle_webhook(hass, webhook_id, request):
-        data = await request.json()
-        hass.states.async_set("sensor.zalo_last_message", str(data))
-        return {}
     try:
-        webhook.async_unregister(hass, WEBHOOK_ID)
+        pass
+
     except Exception:
         pass
-    webhook.async_register(
-        hass, DOMAIN, "Webhook Zalo Bot", WEBHOOK_ID, handle_webhook
-    )
 
     SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
         vol.Required("message"): str,
@@ -1149,11 +1188,16 @@ async def async_setup_entry(hass, entry):
         manufacturer="Smarthome Black",
         name="Zalo Bot",
         model="Zalo Bot",
-        sw_version="2025.7.11"
+        sw_version="2025.7.21"
     )
     return True
 
 
 async def async_unload_entry(hass, entry):
-    hass.data[DOMAIN].pop(entry.entry_id, None)
-    return True
+    """Unload a config entry."""
+    # Unload các platform
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    # Xóa dữ liệu entry
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id, None)
+    return unload_ok
