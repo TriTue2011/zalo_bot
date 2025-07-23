@@ -1268,7 +1268,7 @@ async def async_setup_entry(hass, entry):
         manufacturer="Smarthome Black",
         name="Zalo Bot",
         model="Zalo Bot",
-        sw_version="2025.7.21"
+        sw_version="2025.7.23"
     )
     return True
 
