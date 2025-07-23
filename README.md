@@ -63,29 +63,34 @@ triggers:
   - allowed_methods:
       - POST
       - PUT
-    local_only: true
-    webhook_id: "-kckRb3xuIlUYoMHgbwIwPMKq"
+      - GET
+      - HEAD
+    local_only: false
+    webhook_id: "xxxxxxxxx"
     trigger: webhook
 conditions:
   - condition: template
     value_template: >
-      {{ '@TenZaloBot' in trigger.json.data.content and trigger.json.data.dName ==
-      'TenZaloBan' }}
+      {{ '@Blackbot' in trigger.json.data.content and trigger.json.data.dName ==
+      'Black' }}
 actions:
   - variables:
       user_message: "{{ trigger.json.data.content }}"
+      conversation_id: "{{ trigger.json.data.uidFrom }}"
   - data:
       text: "{{ user_message }}"
-      agent_id: conversation.google_generative_ai_2
+      agent_id: conversation.google_ai_conversation
+      conversation_id: "{{ conversation_id }}"
     response_variable: convo_response
     action: conversation.process
   - data:
-      message: "{{ convo_response.response.speech.plain.speech }}"
-      thread_id: "Id hội thoại"
-      account_selection: "SĐT của Bot"
-      type: 1
+      message: "Bot-Hass: {{ convo_response.response.speech.plain.speech }}"
+      thread_id: "xxxxxxxxxx"
+      account_selection: "+84xxxxxxxxx"
+      type: "1"
     action: zalo_bot.send_message
 mode: single
+
 ```
 
 ## Đóng góp
