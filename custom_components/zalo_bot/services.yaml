@@ -30,6 +30,44 @@ send_message:
               value: "0"
             - label: "Group"
               value: "1"
+send_file:
+  description: Gửi một file bất kỳ qua URL hoặc từ đường dẫn cục bộ.
+  fields:
+    file_path_or_url:
+      description: Đường dẫn file trên Home Assistant hoặc URL của file cần gửi.
+      example: "/config/www/document.pdf"
+      required: true
+      selector:
+        text:
+    message:
+      description: Nội dung tin nhắn gửi kèm (tùy chọn)
+      example: "Check out this file!"
+      required: false
+      selector:
+        text:
+    thread_id:
+      description: ThreadId nhận tin nhắn (user hoặc group)
+      example: "5841349563795164131"
+      required: true
+      selector:
+        text:
+    account_selection:
+      description: Số điện thoại hoặc ID tài khoản gửi
+      example: "0764343466"
+      required: true
+      selector:
+        text:
+    type:
+      description: "Loại gửi: 0=user, 1=group (mặc định 0)"
+      example: 0
+      default: 0
+      selector:
+        select:
+          options:
+            - label: "User"
+              value: "0"
+            - label: "Group"
+              value: "1"
 send_image:
   description: Gửi ảnh Zalo
   fields:

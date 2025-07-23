@@ -324,6 +324,13 @@ async def async_setup_entry(hass, entry):
         vol.Required("account_selection"): str,
         vol.Optional("type", default="0"): str,
     })
+    SERVICE_SEND_FILE_SCHEMA = vol.Schema({
+        vol.Required("file_path_or_url"): str,
+        vol.Optional("message"): str,
+        vol.Required("thread_id"): str,
+        vol.Required("account_selection"): str,
+        vol.Optional("type", default="0"): str,
+    })
 
     async def async_send_message_service(call):
         _LOGGER.debug("Dịch vụ async_send_message_service được gọi với dữ liệu: %s", call.data)
@@ -347,6 +354,66 @@ async def async_setup_entry(hass, entry):
         except Exception as e:
             _LOGGER.error("Exception trong async_send_message_service: %s", e, exc_info=True)
             await show_result_notification(hass, "gửi tin nhắn", None, error=e)
+
+    async def async_send_file_service(call):
+        _LOGGER.debug("Dịch vụ async_send_file_service được gọi với dữ liệu: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            msg_type = call.data.get("type", "0")
+            file_path = call.data["file_path_or_url"]
+            public_url = None
+
+            if file_path.startswith("http://") or file_path.startswith("https://"):
+                public_url = file_path
+            else:
+                if not os.path.isfile(file_path):
+                    error_msg = f"Không tìm thấy tệp: {file_path}"
+                    await show_result_notification(hass, "gửi file", None, error=error_msg)
+                    return
+
+                try:
+                    is_local_server = ("localhost" in zalo_server or "127.0.0.1" in zalo_server)
+                    if is_local_server:
+                        public_url = await hass.async_add_executor_job(copy_to_public, file_path, zalo_server)
+                        if not public_url:
+                            error_msg = "Không thể copy tệp đến thư mục public"
+                            await show_result_notification(hass, "gửi file", None, error=error_msg)
+                            return
+                        if public_url.startswith("/local/"):
+                            filename = os.path.basename(file_path)
+                            public_url = f"{zalo_server}/{filename}"
+                    else:
+                        _LOGGER.info(f"Sử dụng máy chủ HTTP tạm thời để phục vụ tệp: {file_path}")
+                        public_url = await hass.async_add_executor_job(
+                            serve_file_temporarily, file_path, 90
+                        )
+                except Exception as e:
+                    error_msg = f"Lỗi khi xử lý tệp: {str(e)}"
+                    _LOGGER.error(error_msg)
+                    await show_result_notification(hass, "gửi file", None, error=error_msg)
+                    return
+            
+            if not public_url:
+                await show_result_notification(hass, "gửi file", None, error="Không thể tạo URL công khai cho tệp.")
+                return
+
+            payload = {
+                "fileUrl": public_url,
+                "message": call.data.get("message", ""),
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "type": "group" if msg_type == "1" else "user"
+            }
+            _LOGGER.debug("Gửi POST đến %s/api/sendFileByAccount với payload: %s",
+                          zalo_server, payload)
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/sendFileByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi gửi file: %s", resp.text)
+            await show_result_notification(hass, "gửi file", resp)
+        except Exception as e:
+            _LOGGER.error("Exception trong async_send_file_service: %s", e, exc_info=True)
+            await show_result_notification(hass, "gửi file", None, error=e)
 
     async def async_send_image_service(call):
         _LOGGER.debug("Dịch vụ async_send_image_service được gọi với dữ liệu: %s", call.data)
@@ -410,6 +477,9 @@ async def async_setup_entry(hass, entry):
             await show_result_notification(hass, "gửi ảnh", None, error=e)
     hass.services.async_register(
         DOMAIN, "send_message", async_send_message_service, schema=SERVICE_SEND_MESSAGE_SCHEMA
+    )
+    hass.services.async_register(
+        DOMAIN, "send_file", async_send_file_service, schema=SERVICE_SEND_FILE_SCHEMA
     )
     hass.services.async_register(
         DOMAIN, "send_image", async_send_image_service, schema=SERVICE_SEND_IMAGE_SCHEMA
