@@ -28,6 +28,526 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 PLATFORMS = [Platform.SWITCH]
 SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
 
+# Schema cho các service
+SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("message"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+SERVICE_SEND_FILE_SCHEMA = vol.Schema({
+    vol.Required("file_path_or_url"): cv.string,
+    vol.Optional("message"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+SERVICE_SEND_IMAGE_SCHEMA = vol.Schema({
+    vol.Required("image_path"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+SERVICE_GET_LOGGED_ACCOUNTS_SCHEMA = vol.Schema({})
+
+SERVICE_GET_ACCOUNT_DETAILS_SCHEMA = vol.Schema({
+    vol.Optional("own_id", default=""): cv.string,
+})
+
+SERVICE_FIND_USER_SCHEMA = vol.Schema({
+    vol.Optional("phone", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_GET_USER_INFO_SCHEMA = vol.Schema({
+    vol.Optional("user_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_SEND_FRIEND_REQUEST_SCHEMA = vol.Schema({
+    vol.Optional("user_id", default=""): cv.string,
+    vol.Optional("message", default="Xin chào, hãy kết bạn với tôi!"): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_CREATE_GROUP_SCHEMA = vol.Schema({
+    vol.Optional("members", default=""): cv.string,
+    vol.Optional("name", default=""): cv.string,
+    vol.Optional("avatar_path", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_GET_GROUP_INFO_SCHEMA = vol.Schema({
+    vol.Optional("group_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_ADD_USER_TO_GROUP_SCHEMA = vol.Schema({
+    vol.Optional("group_id", default=""): cv.string,
+    vol.Optional("member_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_REMOVE_USER_FROM_GROUP_SCHEMA = vol.Schema({
+    vol.Optional("group_id", default=""): cv.string,
+    vol.Optional("member_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_SEND_IMAGE_TO_USER_SCHEMA = vol.Schema({
+    vol.Optional("image_path", default=""): cv.string,
+    vol.Optional("thread_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_SEND_IMAGES_TO_USER_SCHEMA = vol.Schema({
+    vol.Optional("image_paths", default=""): cv.string,
+    vol.Optional("thread_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_SEND_IMAGE_TO_GROUP_SCHEMA = vol.Schema({
+    vol.Optional("image_path", default=""): cv.string,
+    vol.Optional("thread_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_SEND_IMAGES_TO_GROUP_SCHEMA = vol.Schema({
+    vol.Optional("image_paths", default=""): cv.string,
+    vol.Optional("thread_id", default=""): cv.string,
+    vol.Optional("account_selection", default=""): cv.string,
+})
+
+SERVICE_GET_ACCOUNT_WEBHOOKS_SCHEMA = vol.Schema({})
+
+SERVICE_GET_ACCOUNT_WEBHOOK_SCHEMA = vol.Schema({
+    vol.Optional("own_id", default=""): cv.string,
+})
+
+SERVICE_SET_ACCOUNT_WEBHOOK_SCHEMA = vol.Schema({
+    vol.Optional("own_id", default=""): cv.string,
+    vol.Optional("message_webhook_url", default=""): cv.string,
+    vol.Optional("group_event_webhook_url", default=""): cv.string,
+    vol.Optional("reaction_webhook_url", default=""): cv.string,
+})
+
+SERVICE_DELETE_ACCOUNT_WEBHOOK_SCHEMA = vol.Schema({
+    vol.Optional("own_id", default=""): cv.string,
+})
+
+SERVICE_GET_PROXIES_SCHEMA = vol.Schema({})
+
+SERVICE_ADD_PROXY_SCHEMA = vol.Schema({
+    vol.Optional("proxy_url", default=""): cv.string,
+})
+
+SERVICE_REMOVE_PROXY_SCHEMA = vol.Schema({
+    vol.Optional("proxy_url", default=""): cv.string,
+})
+
+# Thêm schema cho các service mới
+SERVICE_ACCEPT_FRIEND_REQUEST_SCHEMA = vol.Schema({
+    vol.Required("user_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_BLOCK_USER_SCHEMA = vol.Schema({
+    vol.Required("user_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_UNBLOCK_USER_SCHEMA = vol.Schema({
+    vol.Required("user_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SEND_STICKER_SCHEMA = vol.Schema({
+    vol.Required("sticker_id"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+SERVICE_UNDO_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("msg_id"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+SERVICE_CREATE_REMINDER_SCHEMA = vol.Schema({
+    vol.Required("title"): cv.string,
+    vol.Required("content"): cv.string,
+    vol.Required("remind_time"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+SERVICE_REMOVE_REMINDER_SCHEMA = vol.Schema({
+    vol.Required("reminder_id"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+SERVICE_CHANGE_GROUP_NAME_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("name"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_CHANGE_GROUP_AVATAR_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("image_path"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SEND_VOICE_SCHEMA = vol.Schema({
+    vol.Required("voice_path"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): cv.string,
+})
+
+# Schema cho các API mới bổ sung
+SERVICE_GET_ALL_FRIENDS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_RECEIVED_FRIEND_REQUESTS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_SENT_FRIEND_REQUESTS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_UNDO_FRIEND_REQUEST_SCHEMA = vol.Schema({
+    vol.Required("friend_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_REMOVE_FRIEND_SCHEMA = vol.Schema({
+    vol.Required("friend_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_CHANGE_FRIEND_ALIAS_SCHEMA = vol.Schema({
+    vol.Required("friend_id"): cv.string,
+    vol.Required("alias"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_REMOVE_FRIEND_ALIAS_SCHEMA = vol.Schema({
+    vol.Required("friend_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_ALL_GROUPS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_ADD_GROUP_DEPUTY_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("member_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_REMOVE_GROUP_DEPUTY_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("member_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_CHANGE_GROUP_OWNER_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("member_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_DISPERSE_GROUP_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_ENABLE_GROUP_LINK_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_DISABLE_GROUP_LINK_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_JOIN_GROUP_SCHEMA = vol.Schema({
+    vol.Required("link"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_LEAVE_GROUP_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Optional("silent", default=False): cv.boolean,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_UPDATE_PROFILE_SCHEMA = vol.Schema({
+    vol.Optional("name"): cv.string,
+    vol.Optional("dob"): cv.string,
+    vol.Optional("gender", default="0"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_UPDATE_SETTINGS_SCHEMA = vol.Schema({
+    vol.Required("setting_type"): cv.string,
+    vol.Required("status"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SET_MUTE_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("duration"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SET_PINNED_CONVERSATION_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("pinned"): cv.boolean,
+    vol.Required("account_selection"): cv.string,
+})
+
+# Các schema cho API mới bổ sung thêm
+SERVICE_GET_UNREAD_MARK_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_ADD_UNREAD_MARK_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_REMOVE_UNREAD_MARK_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_DELETE_CHAT_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_ARCHIVED_CHAT_LIST_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_AUTO_DELETE_CHAT_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_UPDATE_AUTO_DELETE_CHAT_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("ttl"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_HIDDEN_CONVERSATIONS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SET_HIDDEN_CONVERSATIONS_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("hidden"): cv.boolean,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_UPDATE_HIDDEN_CONVERS_PIN_SCHEMA = vol.Schema({
+    vol.Required("pin"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_RESET_HIDDEN_CONVERS_PIN_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_MUTE_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_PIN_CONVERSATIONS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_ADD_REACTION_SCHEMA = vol.Schema({
+    vol.Required("icon"): cv.string,
+    vol.Required("thread_id"): cv.string,
+    vol.Required("msg_id"): cv.string,
+    vol.Required("cli_msg_id"): cv.string,
+    vol.Required("type"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_DELETE_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("msg_id"): cv.string,
+    vol.Required("cli_msg_id"): cv.string,
+    vol.Required("uid_from"): cv.string,
+    vol.Required("type"): cv.string,
+    vol.Optional("only_me", default=True): cv.boolean,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_FORWARD_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("message"): cv.string,
+    vol.Required("thread_ids"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_PARSE_LINK_SCHEMA = vol.Schema({
+    vol.Required("link"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SEND_CARD_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("user_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SEND_LINK_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("link"): cv.string,
+    vol.Optional("message", default=""): cv.string,
+    vol.Optional("thumbnail", default=""): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_STICKERS_SCHEMA = vol.Schema({
+    vol.Required("query"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_STICKERS_DETAIL_SCHEMA = vol.Schema({
+    vol.Required("sticker_album"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_SEND_VIDEO_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("video_url"): cv.string,
+    vol.Optional("thumbnail_url", default=""): cv.string,
+    vol.Optional("message", default=""): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_CREATE_NOTE_GROUP_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("title"): cv.string,
+    vol.Optional("pin_act", default=True): cv.boolean,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_EDIT_NOTE_GROUP_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("topic_id"): cv.string,
+    vol.Required("title"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_LIST_BOARD_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_CREATE_POLL_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Required("question"): cv.string,
+    vol.Required("options"): cv.string,
+    vol.Optional("allow_multi_choices", default=False): cv.boolean,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_POLL_DETAIL_SCHEMA = vol.Schema({
+    vol.Required("poll_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_LOCK_POLL_SCHEMA = vol.Schema({
+    vol.Required("poll_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_EDIT_REMINDER_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("topic_id"): cv.string,
+    vol.Required("title"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_REMINDER_SCHEMA = vol.Schema({
+    vol.Required("reminder_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_LIST_REMINDER_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_REMINDER_RESPONSES_SCHEMA = vol.Schema({
+    vol.Required("reminder_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_ADD_QUICK_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("keyword"): cv.string,
+    vol.Required("title"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_QUICK_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_REMOVE_QUICK_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("item_ids"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_UPDATE_QUICK_MESSAGE_SCHEMA = vol.Schema({
+    vol.Required("item_id"): cv.string,
+    vol.Required("keyword"): cv.string,
+    vol.Required("title"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_LABELS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_BLOCK_VIEW_FEED_SCHEMA = vol.Schema({
+    vol.Required("user_id"): cv.string,
+    vol.Required("is_block_feed"): cv.boolean,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_CHANGE_ACCOUNT_AVATAR_SCHEMA = vol.Schema({
+    vol.Required("avatar_source"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_AVATAR_LIST_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_LAST_ONLINE_SCHEMA = vol.Schema({
+    vol.Required("user_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
 session = requests.Session()
 zalo_server = None
 WWW_DIR = None
@@ -312,26 +832,6 @@ async def async_setup_entry(hass, entry):
     except Exception:
         pass
 
-    SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
-        vol.Required("message"): str,
-        vol.Required("thread_id"): str,
-        vol.Required("account_selection"): str,
-        vol.Optional("type", default="0"): str,
-    })
-    SERVICE_SEND_IMAGE_SCHEMA = vol.Schema({
-        vol.Required("image_path"): str,
-        vol.Required("thread_id"): str,
-        vol.Required("account_selection"): str,
-        vol.Optional("type", default="0"): str,
-    })
-    SERVICE_SEND_FILE_SCHEMA = vol.Schema({
-        vol.Required("file_path_or_url"): str,
-        vol.Optional("message"): str,
-        vol.Required("thread_id"): str,
-        vol.Required("account_selection"): str,
-        vol.Optional("type", default="0"): str,
-    })
-
     async def async_send_message_service(call):
         _LOGGER.debug("Dịch vụ async_send_message_service được gọi với dữ liệu: %s", call.data)
         try:
@@ -392,7 +892,7 @@ async def async_setup_entry(hass, entry):
                     _LOGGER.error(error_msg)
                     await show_result_notification(hass, "gửi file", None, error=error_msg)
                     return
-            
+
             if not public_url:
                 await show_result_notification(hass, "gửi file", None, error="Không thể tạo URL công khai cho tệp.")
                 return
@@ -1261,6 +1761,1795 @@ async def async_setup_entry(hass, entry):
 
     hass.services.async_register(DOMAIN, "remove_proxy", async_remove_proxy_service, schema=SERVICE_REMOVE_PROXY_SCHEMA)
 
+    # Thêm triển khai đầy đủ cho các service mới
+    async def async_accept_friend_request_service(call):
+        _LOGGER.debug("Dịch vụ async_accept_friend_request được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "userId": call.data["user_id"],
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/acceptFriendRequestByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi chấp nhận lời mời kết bạn: %s", resp.text)
+            await show_result_notification(hass, "chấp nhận lời mời kết bạn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_accept_friend_request: %s", e)
+            await show_result_notification(hass, "chấp nhận lời mời kết bạn", None, error=e)
+
+    # Đăng ký service accept_friend_request, đảm bảo không quá 120 ký tự/dòng
+    hass.services.async_register(
+        DOMAIN, "accept_friend_request",
+        async_accept_friend_request_service,
+        schema=SERVICE_ACCEPT_FRIEND_REQUEST_SCHEMA
+    )
+
+    async def async_block_user_service(call):
+        _LOGGER.debug("Dịch vụ async_block_user được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "userId": call.data["user_id"],
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/blockUserByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi chặn người dùng: %s", resp.text)
+            await show_result_notification(hass, "chặn người dùng", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_block_user: %s", e)
+            await show_result_notification(hass, "chặn người dùng", None, error=e)
+
+    hass.services.async_register(DOMAIN, "block_user", async_block_user_service, schema=SERVICE_BLOCK_USER_SCHEMA)
+
+    async def async_unblock_user_service(call):
+        _LOGGER.debug("Dịch vụ async_unblock_user được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "userId": call.data["user_id"],
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/unblockUserByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi bỏ chặn người dùng: %s", resp.text)
+            await show_result_notification(hass, "bỏ chặn người dùng", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_unblock_user: %s", e)
+            await show_result_notification(hass, "bỏ chặn người dùng", None, error=e)
+
+    hass.services.async_register(DOMAIN, "unblock_user", async_unblock_user_service, schema=SERVICE_UNBLOCK_USER_SCHEMA)
+
+    async def async_send_sticker_service(call):
+        _LOGGER.debug("Dịch vụ async_send_sticker được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            msg_type = call.data.get("type", "0")
+
+            # Tạo đối tượng sticker đúng định dạng
+            sticker_id = int(call.data["sticker_id"])
+            sticker = {
+                "id": sticker_id,
+                "cateId": 526,  # Giá trị mặc định
+                "type": 1       # Giá trị mặc định
+            }
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "threadId": call.data["thread_id"],
+                "sticker": sticker,
+                "type": 1 if msg_type == "1" else 0
+            }
+
+            _LOGGER.debug("Gửi payload đến sendStickerByAccount: %s", payload)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/sendStickerByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi gửi sticker: %s", resp.text)
+            await show_result_notification(hass, "gửi sticker", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_send_sticker: %s", e)
+            await show_result_notification(hass, "gửi sticker", None, error=e)
+
+    hass.services.async_register(DOMAIN, "send_sticker", async_send_sticker_service, schema=SERVICE_SEND_STICKER_SCHEMA)
+
+    async def async_undo_message_service(call):
+        _LOGGER.debug("Dịch vụ async_undo_message được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            msg_type = call.data.get("type", "0")
+            payload = {
+                "msgId": call.data["msg_id"],
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "type": 1 if msg_type == "1" else 0
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/undoMessageByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi hủy tin nhắn: %s", resp.text)
+            await show_result_notification(hass, "hủy tin nhắn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_undo_message: %s", e)
+            await show_result_notification(hass, "hủy tin nhắn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "undo_message", async_undo_message_service, schema=SERVICE_UNDO_MESSAGE_SCHEMA)
+
+    async def async_create_reminder_service(call):
+        _LOGGER.debug("Dịch vụ async_create_reminder được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "type": call.data.get("type", "0"),
+                "options": {
+                    "title": call.data["title"],
+                    "content": call.data["content"],
+                    "remindTime": call.data["remind_time"]
+                }
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/createReminderByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi tạo lời nhắc: %s", resp.text)
+            await show_result_notification(hass, "tạo lời nhắc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_create_reminder: %s", e)
+            await show_result_notification(hass, "tạo lời nhắc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "create_reminder", async_create_reminder_service,
+                                 schema=SERVICE_CREATE_REMINDER_SCHEMA)
+
+    async def async_remove_reminder_service(call):
+        _LOGGER.debug("Dịch vụ async_remove_reminder được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "reminderId": call.data["reminder_id"],
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "type": call.data.get("type", "0")
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/removeReminderByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi xóa lời nhắc: %s", resp.text)
+            await show_result_notification(hass, "xóa lời nhắc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_remove_reminder: %s", e)
+            await show_result_notification(hass, "xóa lời nhắc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "remove_reminder", async_remove_reminder_service,
+                                 schema=SERVICE_REMOVE_REMINDER_SCHEMA)
+
+    async def async_change_group_name_service(call):
+        _LOGGER.debug("Dịch vụ async_change_group_name được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "groupId": call.data["group_id"],
+                "name": call.data["name"],
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/changeGroupNameByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi đổi tên nhóm: %s", resp.text)
+            await show_result_notification(hass, "đổi tên nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_change_group_name: %s", e)
+            await show_result_notification(hass, "đổi tên nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "change_group_name", async_change_group_name_service,
+                                 schema=SERVICE_CHANGE_GROUP_NAME_SCHEMA)
+
+    async def async_change_group_avatar_service(call):
+        _LOGGER.debug("Dịch vụ async_change_group_avatar được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "groupId": call.data["group_id"],
+                "imagePath": call.data["image_path"],
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/changeGroupAvatarByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi đổi ảnh đại diện nhóm: %s", resp.text)
+            await show_result_notification(hass, "đổi ảnh đại diện nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_change_group_avatar: %s", e)
+            await show_result_notification(hass, "đổi ảnh đại diện nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "change_group_avatar", async_change_group_avatar_service,
+                                 schema=SERVICE_CHANGE_GROUP_AVATAR_SCHEMA)
+
+    async def async_send_voice_service(call):
+        _LOGGER.debug("Dịch vụ async_send_voice được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Nếu là đường dẫn cục bộ, tạo URL tạm thời
+            voice_path = call.data["voice_path"]
+            voice_url = voice_path
+            local_server = None
+
+            if not voice_path.startswith(("http://", "https://")):
+                if os.path.isfile(voice_path):
+                    voice_url, local_server = await hass.async_add_executor_job(
+                        serve_file_temporarily, voice_path
+                    )
+                else:
+                    raise Exception(f"Không tìm thấy file âm thanh: {voice_path}")
+
+            try:
+                payload = {
+                    "threadId": call.data["thread_id"],
+                    "accountSelection": call.data["account_selection"],
+                    "options": {
+                        "voiceUrl": voice_url
+                    }
+                }
+                resp = await hass.async_add_executor_job(
+                    lambda: session.post(f"{zalo_server}/api/sendVoiceByAccount", json=payload)
+                )
+                _LOGGER.info("Phản hồi gửi tin nhắn thoại: %s", resp.text)
+                await show_result_notification(hass, "gửi tin nhắn thoại", resp)
+            finally:
+                # Đảm bảo luôn đóng server nếu đã tạo
+                if local_server:
+                    local_server.shutdown()
+                    local_server.server_close()
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_send_voice: %s", e)
+            await show_result_notification(hass, "gửi tin nhắn thoại", None, error=e)
+
+    hass.services.async_register(DOMAIN, "send_voice", async_send_voice_service,
+                                 schema=SERVICE_SEND_VOICE_SCHEMA)
+
+    # Đăng ký các service mới
+    async def async_get_all_friends_service(call):
+        _LOGGER.debug("Dịch vụ async_get_all_friends được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getAllFriendsByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách bạn bè: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách bạn bè", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_all_friends: %s", e)
+            await show_result_notification(hass, "lấy danh sách bạn bè", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_all_friends", async_get_all_friends_service,
+                                 schema=SERVICE_GET_ALL_FRIENDS_SCHEMA)
+
+    async def async_get_received_friend_requests_service(call):
+        _LOGGER.debug("Dịch vụ async_get_received_friend_requests được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getReceivedFriendRequestsByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy lời mời kết bạn đã nhận: %s", resp.text)
+            await show_result_notification(hass, "lấy lời mời kết bạn đã nhận", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_received_friend_requests: %s", e)
+            await show_result_notification(hass, "lấy lời mời kết bạn đã nhận", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_received_friend_requests",
+                                 async_get_received_friend_requests_service,
+                                 schema=SERVICE_GET_RECEIVED_FRIEND_REQUESTS_SCHEMA)
+
+    async def async_get_sent_friend_requests_service(call):
+        _LOGGER.debug("Dịch vụ async_get_sent_friend_requests được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getSentFriendRequestByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy lời mời kết bạn đã gửi: %s", resp.text)
+            await show_result_notification(hass, "lấy lời mời kết bạn đã gửi", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_sent_friend_requests: %s", e)
+            await show_result_notification(hass, "lấy lời mời kết bạn đã gửi", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_sent_friend_requests",
+                                 async_get_sent_friend_requests_service,
+                                 schema=SERVICE_GET_SENT_FRIEND_REQUESTS_SCHEMA)
+
+    async def async_undo_friend_request_service(call):
+        _LOGGER.debug("Dịch vụ async_undo_friend_request được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "friendId": call.data["friend_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/undoFriendRequestByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi thu hồi lời mời kết bạn: %s", resp.text)
+            await show_result_notification(hass, "thu hồi lời mời kết bạn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_undo_friend_request: %s", e)
+            await show_result_notification(hass, "thu hồi lời mời kết bạn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "undo_friend_request",
+                                 async_undo_friend_request_service,
+                                 schema=SERVICE_UNDO_FRIEND_REQUEST_SCHEMA)
+
+    async def async_remove_friend_service(call):
+        _LOGGER.debug("Dịch vụ async_remove_friend được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "friendId": call.data["friend_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/removeFriendByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi hủy kết bạn: %s", resp.text)
+            await show_result_notification(hass, "hủy kết bạn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_remove_friend: %s", e)
+            await show_result_notification(hass, "hủy kết bạn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "remove_friend", async_remove_friend_service,
+                                 schema=SERVICE_REMOVE_FRIEND_SCHEMA)
+
+    async def async_change_friend_alias_service(call):
+        _LOGGER.debug("Dịch vụ async_change_friend_alias được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "friendId": call.data["friend_id"],
+                "alias": call.data["alias"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/changeFriendAliasByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi đổi biệt danh bạn bè: %s", resp.text)
+            await show_result_notification(hass, "đổi biệt danh bạn bè", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_change_friend_alias: %s", e)
+            await show_result_notification(hass, "đổi biệt danh bạn bè", None, error=e)
+
+    hass.services.async_register(DOMAIN, "change_friend_alias",
+                                 async_change_friend_alias_service,
+                                 schema=SERVICE_CHANGE_FRIEND_ALIAS_SCHEMA)
+
+    async def async_remove_friend_alias_service(call):
+        _LOGGER.debug("Dịch vụ async_remove_friend_alias được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "friendId": call.data["friend_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/removeFriendAliasByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi xóa biệt danh bạn bè: %s", resp.text)
+            await show_result_notification(hass, "xóa biệt danh bạn bè", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_remove_friend_alias: %s", e)
+            await show_result_notification(hass, "xóa biệt danh bạn bè", None, error=e)
+
+    hass.services.async_register(DOMAIN, "remove_friend_alias",
+                                 async_remove_friend_alias_service,
+                                 schema=SERVICE_REMOVE_FRIEND_ALIAS_SCHEMA)
+
+    async def async_get_all_groups_service(call):
+        _LOGGER.debug("Dịch vụ async_get_all_groups được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getAllGroupsByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách nhóm: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_all_groups: %s", e)
+            await show_result_notification(hass, "lấy danh sách nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_all_groups", async_get_all_groups_service,
+                                 schema=SERVICE_GET_ALL_GROUPS_SCHEMA)
+
+    async def async_add_group_deputy_service(call):
+        _LOGGER.debug("Dịch vụ async_add_group_deputy được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"],
+                "memberId": call.data["member_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/addGroupDeputyByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi thêm phó nhóm: %s", resp.text)
+            await show_result_notification(hass, "thêm phó nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_add_group_deputy: %s", e)
+            await show_result_notification(hass, "thêm phó nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "add_group_deputy", async_add_group_deputy_service,
+                                 schema=SERVICE_ADD_GROUP_DEPUTY_SCHEMA)
+
+    async def async_remove_group_deputy_service(call):
+        _LOGGER.debug("Dịch vụ async_remove_group_deputy được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"],
+                "memberId": call.data["member_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/removeGroupDeputyByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi xóa phó nhóm: %s", resp.text)
+            await show_result_notification(hass, "xóa phó nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_remove_group_deputy: %s", e)
+            await show_result_notification(hass, "xóa phó nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "remove_group_deputy",
+                                 async_remove_group_deputy_service,
+                                 schema=SERVICE_REMOVE_GROUP_DEPUTY_SCHEMA)
+
+    async def async_change_group_owner_service(call):
+        _LOGGER.debug("Dịch vụ async_change_group_owner được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"],
+                "memberId": call.data["member_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/changeGroupOwnerByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi chuyển quyền sở hữu nhóm: %s", resp.text)
+            await show_result_notification(hass, "chuyển quyền sở hữu nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_change_group_owner: %s", e)
+            await show_result_notification(hass, "chuyển quyền sở hữu nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "change_group_owner",
+                                 async_change_group_owner_service,
+                                 schema=SERVICE_CHANGE_GROUP_OWNER_SCHEMA)
+
+    async def async_disperse_group_service(call):
+        _LOGGER.debug("Dịch vụ async_disperse_group được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/disperseGroupByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi giải tán nhóm: %s", resp.text)
+            await show_result_notification(hass, "giải tán nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_disperse_group: %s", e)
+            await show_result_notification(hass, "giải tán nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "disperse_group", async_disperse_group_service,
+                                 schema=SERVICE_DISPERSE_GROUP_SCHEMA)
+
+    async def async_enable_group_link_service(call):
+        _LOGGER.debug("Dịch vụ async_enable_group_link được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/enableGroupLinkByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi kích hoạt link nhóm: %s", resp.text)
+            await show_result_notification(hass, "kích hoạt link nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_enable_group_link: %s", e)
+            await show_result_notification(hass, "kích hoạt link nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "enable_group_link",
+                                 async_enable_group_link_service,
+                                 schema=SERVICE_ENABLE_GROUP_LINK_SCHEMA)
+
+    async def async_disable_group_link_service(call):
+        _LOGGER.debug("Dịch vụ async_disable_group_link được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/disableGroupLinkByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi vô hiệu hóa link nhóm: %s", resp.text)
+            await show_result_notification(hass, "vô hiệu hóa link nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_disable_group_link: %s", e)
+            await show_result_notification(hass, "vô hiệu hóa link nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "disable_group_link",
+                                 async_disable_group_link_service,
+                                 schema=SERVICE_DISABLE_GROUP_LINK_SCHEMA)
+
+    async def async_join_group_service(call):
+        _LOGGER.debug("Dịch vụ async_join_group được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "link": call.data["link"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/joinGroupByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi tham gia nhóm: %s", resp.text)
+            await show_result_notification(hass, "tham gia nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_join_group: %s", e)
+            await show_result_notification(hass, "tham gia nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "join_group", async_join_group_service,
+                                 schema=SERVICE_JOIN_GROUP_SCHEMA)
+
+    async def async_leave_group_service(call):
+        _LOGGER.debug("Dịch vụ async_leave_group được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"],
+                "silent": call.data.get("silent", False)
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/leaveGroupByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi rời nhóm: %s", resp.text)
+            await show_result_notification(hass, "rời nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_leave_group: %s", e)
+            await show_result_notification(hass, "rời nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "leave_group", async_leave_group_service,
+                                 schema=SERVICE_LEAVE_GROUP_SCHEMA)
+
+    async def async_update_profile_service(call):
+        _LOGGER.debug("Dịch vụ async_update_profile được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+
+            if "name" in call.data:
+                payload["name"] = call.data["name"]
+            if "dob" in call.data:
+                payload["dob"] = call.data["dob"]
+            if "gender" in call.data:
+                payload["gender"] = int(call.data["gender"])
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/updateProfileByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi cập nhật thông tin cá nhân: %s", resp.text)
+            await show_result_notification(hass, "cập nhật thông tin cá nhân", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_update_profile: %s", e)
+            await show_result_notification(hass, "cập nhật thông tin cá nhân", None, error=e)
+
+    hass.services.async_register(DOMAIN, "update_profile", async_update_profile_service,
+                                 schema=SERVICE_UPDATE_PROFILE_SCHEMA)
+
+    async def async_update_settings_service(call):
+        _LOGGER.debug("Dịch vụ async_update_settings được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "type": call.data["setting_type"],
+                "status": int(call.data["status"])
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/updateSettingsByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi cập nhật cài đặt: %s", resp.text)
+            await show_result_notification(hass, "cập nhật cài đặt", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_update_settings: %s", e)
+            await show_result_notification(hass, "cập nhật cài đặt", None, error=e)
+
+    hass.services.async_register(DOMAIN, "update_settings", async_update_settings_service,
+                                 schema=SERVICE_UPDATE_SETTINGS_SCHEMA)
+
+    async def async_set_mute_service(call):
+        _LOGGER.debug("Dịch vụ async_set_mute được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Xác định hành động dựa trên duration
+            duration = int(call.data.get("duration", 0))
+            action = "mute" if duration > 0 else "unmute"
+
+            # Chuyển đổi type từ chuỗi sang số (0 cho user, 1 cho group)
+            mute_type = call.data.get("type", "0")
+            mute_type_num = 1 if mute_type.lower() == "group" else 0
+
+            payload = {
+                "params": {
+                    "action": action,
+                    "duration": duration
+                },
+                "threadId": call.data["thread_id"],  # Sửa từ threadID thành threadId
+                "type": mute_type_num,
+                "accountSelection": call.data["account_selection"]
+            }
+
+            _LOGGER.debug("Gửi payload đến setMuteByAccount: %s", payload)
+            url = f"{zalo_server}/api/setMuteByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi cài đặt tắt thông báo: %s", resp.text)
+            await show_result_notification(hass, "cài đặt tắt thông báo", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_set_mute: %s", e)
+            await show_result_notification(hass, "cài đặt tắt thông báo", None, error=e)
+
+    hass.services.async_register(DOMAIN, "set_mute", async_set_mute_service,
+                                 schema=SERVICE_SET_MUTE_SCHEMA)
+
+    async def async_set_pinned_conversation_service(call):
+        _LOGGER.debug("Dịch vụ async_set_pinned_conversation được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Đảm bảo pinned là giá trị boolean
+            pinned_str = str(call.data.get("pinned", "true")).lower()
+            pinned = pinned_str == "true" or pinned_str == "1" or pinned_str == "yes"
+
+            # Chuyển đổi type từ chuỗi sang số (0 cho user, 1 cho group)
+            conv_type = call.data.get("type", "0")
+            conv_type_num = 1 if conv_type.lower() == "group" else 0
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "pinned": pinned,
+                "threadId": call.data["thread_id"],
+                "type": conv_type_num
+            }
+
+            _LOGGER.debug("Gửi payload đến setPinnedConversationsByAccount: %s", payload)
+            url = f"{zalo_server}/api/setPinnedConversationsByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi ghim/bỏ ghim cuộc trò chuyện: %s", resp.text)
+            await show_result_notification(hass, "ghim/bỏ ghim cuộc trò chuyện", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_set_pinned_conversation: %s", e)
+            await show_result_notification(hass, "ghim/bỏ ghim cuộc trò chuyện", None, error=e)
+
+    hass.services.async_register(DOMAIN, "set_pinned_conversation",
+                                 async_set_pinned_conversation_service,
+                                 schema=SERVICE_SET_PINNED_CONVERSATION_SCHEMA)
+
+    # Đăng ký các service bổ sung
+
+    async def async_get_unread_mark_service(call):
+        _LOGGER.debug("Dịch vụ async_get_unread_mark được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getUnreadMarkByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách cuộc trò chuyện chưa đọc: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện chưa đọc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_unread_mark: %s", e)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện chưa đọc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_unread_mark", async_get_unread_mark_service,
+                                 schema=SERVICE_GET_UNREAD_MARK_SCHEMA)
+
+    async def async_add_unread_mark_service(call):
+        _LOGGER.debug("Dịch vụ async_add_unread_mark được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "threadId": call.data["thread_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/addUnreadMarkByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi đánh dấu chưa đọc: %s", resp.text)
+            await show_result_notification(hass, "đánh dấu chưa đọc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_add_unread_mark: %s", e)
+            await show_result_notification(hass, "đánh dấu chưa đọc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "add_unread_mark", async_add_unread_mark_service,
+                                 schema=SERVICE_ADD_UNREAD_MARK_SCHEMA)
+
+    async def async_remove_unread_mark_service(call):
+        _LOGGER.debug("Dịch vụ async_remove_unread_mark được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "threadId": call.data["thread_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/removeUnreadMarkByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi bỏ đánh dấu chưa đọc: %s", resp.text)
+            await show_result_notification(hass, "bỏ đánh dấu chưa đọc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_remove_unread_mark: %s", e)
+            await show_result_notification(hass, "bỏ đánh dấu chưa đọc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "remove_unread_mark", async_remove_unread_mark_service,
+                                 schema=SERVICE_REMOVE_UNREAD_MARK_SCHEMA)
+
+    async def async_delete_chat_service(call):
+        _LOGGER.debug("Dịch vụ async_delete_chat được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "threadId": call.data["thread_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/deleteChatByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi xóa cuộc trò chuyện: %s", resp.text)
+            await show_result_notification(hass, "xóa cuộc trò chuyện", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_delete_chat: %s", e)
+            await show_result_notification(hass, "xóa cuộc trò chuyện", None, error=e)
+
+    hass.services.async_register(DOMAIN, "delete_chat", async_delete_chat_service,
+                                 schema=SERVICE_DELETE_CHAT_SCHEMA)
+
+    async def async_get_archived_chat_list_service(call):
+        _LOGGER.debug("Dịch vụ async_get_archived_chat_list được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getArchivedChatListByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách cuộc trò chuyện lưu trữ: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện lưu trữ", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_archived_chat_list: %s", e)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện lưu trữ", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_archived_chat_list", async_get_archived_chat_list_service,
+                                 schema=SERVICE_GET_ARCHIVED_CHAT_LIST_SCHEMA)
+
+    async def async_get_auto_delete_chat_service(call):
+        _LOGGER.debug("Dịch vụ async_get_auto_delete_chat được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getAutoDeleteChatByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách tự động xóa tin nhắn: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách tự động xóa tin nhắn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_auto_delete_chat: %s", e)
+            await show_result_notification(hass, "lấy danh sách tự động xóa tin nhắn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_auto_delete_chat", async_get_auto_delete_chat_service,
+                                 schema=SERVICE_GET_AUTO_DELETE_CHAT_SCHEMA)
+
+    async def async_update_auto_delete_chat_service(call):
+        _LOGGER.debug("Dịch vụ async_update_auto_delete_chat được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "threadId": call.data["thread_id"],
+                "ttl": int(call.data["ttl"])
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/updateAutoDeleteChatByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi cập nhật tự động xóa tin nhắn: %s", resp.text)
+            await show_result_notification(hass, "cập nhật tự động xóa tin nhắn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_update_auto_delete_chat: %s", e)
+            await show_result_notification(hass, "cập nhật tự động xóa tin nhắn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "update_auto_delete_chat", async_update_auto_delete_chat_service,
+                                 schema=SERVICE_UPDATE_AUTO_DELETE_CHAT_SCHEMA)
+
+    async def async_get_hidden_conversations_service(call):
+        _LOGGER.debug("Dịch vụ async_get_hidden_conversations được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getHiddenConversationsByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách cuộc trò chuyện ẩn: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện ẩn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_hidden_conversations: %s", e)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện ẩn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_hidden_conversations", async_get_hidden_conversations_service,
+                                 schema=SERVICE_GET_HIDDEN_CONVERSATIONS_SCHEMA)
+
+    async def async_set_hidden_conversations_service(call):
+        _LOGGER.debug("Dịch vụ async_set_hidden_conversations được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "threadId": call.data["thread_id"],
+                "hidden": call.data["hidden"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/setHiddenConversationsByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi ẩn/hiện cuộc trò chuyện: %s", resp.text)
+            await show_result_notification(hass, "ẩn/hiện cuộc trò chuyện", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_set_hidden_conversations: %s", e)
+            await show_result_notification(hass, "ẩn/hiện cuộc trò chuyện", None, error=e)
+
+    hass.services.async_register(DOMAIN, "set_hidden_conversations", async_set_hidden_conversations_service,
+                                 schema=SERVICE_SET_HIDDEN_CONVERSATIONS_SCHEMA)
+
+    async def async_update_hidden_convers_pin_service(call):
+        _LOGGER.debug("Dịch vụ async_update_hidden_convers_pin được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "pin": call.data["pin"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/updateHiddenConversPinByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi cập nhật PIN cho cuộc trò chuyện ẩn: %s", resp.text)
+            await show_result_notification(hass, "cập nhật PIN cho cuộc trò chuyện ẩn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_update_hidden_convers_pin: %s", e)
+            await show_result_notification(hass, "cập nhật PIN cho cuộc trò chuyện ẩn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "update_hidden_convers_pin", async_update_hidden_convers_pin_service,
+                                 schema=SERVICE_UPDATE_HIDDEN_CONVERS_PIN_SCHEMA)
+
+    async def async_reset_hidden_convers_pin_service(call):
+        _LOGGER.debug("Dịch vụ async_reset_hidden_convers_pin được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/resetHiddenConversPinByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi đặt lại PIN cho cuộc trò chuyện ẩn: %s", resp.text)
+            await show_result_notification(hass, "đặt lại PIN cho cuộc trò chuyện ẩn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_reset_hidden_convers_pin: %s", e)
+            await show_result_notification(hass, "đặt lại PIN cho cuộc trò chuyện ẩn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "reset_hidden_convers_pin", async_reset_hidden_convers_pin_service,
+                                 schema=SERVICE_RESET_HIDDEN_CONVERS_PIN_SCHEMA)
+
+    async def async_get_mute_service(call):
+        _LOGGER.debug("Dịch vụ async_get_mute được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getMuteByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách cuộc trò chuyện tắt thông báo: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện tắt thông báo", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_mute: %s", e)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện tắt thông báo", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_mute", async_get_mute_service,
+                                 schema=SERVICE_GET_MUTE_SCHEMA)
+
+    async def async_get_pin_conversations_service(call):
+        _LOGGER.debug("Dịch vụ async_get_pin_conversations được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getPinConversationsByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách cuộc trò chuyện ghim: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện ghim", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_pin_conversations: %s", e)
+            await show_result_notification(hass, "lấy danh sách cuộc trò chuyện ghim", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_pin_conversations", async_get_pin_conversations_service,
+                                 schema=SERVICE_GET_PIN_CONVERSATIONS_SCHEMA)
+
+    async def async_add_reaction_service(call):
+        _LOGGER.debug("Dịch vụ async_add_reaction được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Thử chuyển đổi msgId và cliMsgId sang kiểu số nguyên
+            try:
+                msg_id = int(call.data["msg_id"])
+                cli_msg_id = int(call.data["cli_msg_id"])
+            except ValueError:
+                msg_id = call.data["msg_id"]
+                cli_msg_id = call.data["cli_msg_id"]
+
+            # Chuyển đổi type từ chuỗi sang số (0 cho user, 1 cho group)
+            reaction_type = 1 if call.data["type"].lower() == "group" else 0
+
+            # Chuyển đổi tên cảm xúc thành giá trị đúng từ enum Reactions
+            reaction_icon = call.data["icon"].lower()
+            reaction_map = {
+                "like": "/-strong",
+                "heart": "/-heart",
+                "haha": ":>",
+                "wow": ":o",
+                "cry": ":-((",
+                "angry": ":-h",
+                "kiss": ":-*",
+                "tears_of_joy": ":')",
+                "shit": "/-shit",
+                "rose": "/-rose",
+                "broken_heart": "/-break",
+                "dislike": "/-weak",
+                "love": ";xx",
+                "confused": ";-/",
+                "wink": ";-)",
+                "fade": "/-fade",
+                "sun": "/-li",
+                "birthday": "/-bd",
+                "bomb": "/-bome",
+                "ok": "/-ok",
+                "peace": "/-v",
+                "thanks": "/-thanks",
+                "punch": "/-punch",
+                "share": "/-share",
+                "pray": "_()_",
+                "no": "/-no",
+                "bad": "/-bad",
+                "love_you": "/-loveu",
+                "sad": "--b"
+            }
+
+            # Sử dụng giá trị từ map hoặc giữ nguyên nếu không tìm thấy
+            icon_value = reaction_map.get(reaction_icon, reaction_icon)
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "icon": icon_value,
+                "dest": {
+                    "threadId": call.data["thread_id"],
+                    "type": reaction_type,
+                    "data": {
+                        "msgId": msg_id,
+                        "cliMsgId": cli_msg_id
+                    }
+                }
+            }
+
+            _LOGGER.debug("Gửi payload đến addReactionByAccount: %s", payload)
+            url = f"{zalo_server}/api/addReactionByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi thêm cảm xúc: %s", resp.text)
+
+            # Thêm log chi tiết hơn về phản hồi
+            if resp.status_code != 200:
+                _LOGGER.error("Lỗi HTTP khi gọi addReactionByAccount: %s - %s", resp.status_code, resp.reason)
+
+            await show_result_notification(hass, "thêm cảm xúc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_add_reaction: %s", e)
+            await show_result_notification(hass, "thêm cảm xúc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "add_reaction", async_add_reaction_service,
+                                 schema=SERVICE_ADD_REACTION_SCHEMA)
+
+    async def async_delete_message_service(call):
+        _LOGGER.debug("Dịch vụ async_delete_message được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Chuyển đổi type từ chuỗi sang số (0 cho user, 1 cho group)
+            message_type = 1 if call.data["type"].lower() == "group" else 0
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "dest": {
+                    "threadId": call.data["thread_id"],
+                    "type": message_type,
+                    "data": {
+                        "msgId": call.data["msg_id"],
+                        "cliMsgId": call.data["cli_msg_id"],
+                        "uidFrom": call.data["uid_from"]
+                    }
+                },
+                "onlyMe": call.data.get("only_me", True)
+            }
+
+            url = f"{zalo_server}/api/deleteMessageByAccount"
+            _LOGGER.debug("Gửi payload đến deleteMessageByAccount: %s", payload)
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi xóa tin nhắn: %s", resp.text)
+            await show_result_notification(hass, "xóa tin nhắn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_delete_message: %s", e)
+            await show_result_notification(hass, "xóa tin nhắn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "delete_message", async_delete_message_service,
+                                 schema=SERVICE_DELETE_MESSAGE_SCHEMA)
+
+    async def async_forward_message_service(call):
+        _LOGGER.debug("Dịch vụ async_forward_message được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            thread_ids = call.data["thread_ids"].split(",")
+            thread_ids = [tid.strip() for tid in thread_ids]
+
+            # Lấy type từ dữ liệu gọi hoặc mặc định là 0 (user)
+            msg_type = call.data.get("type", "0")
+            # Chuyển đổi type từ chuỗi sang số nếu cần
+            msg_type_num = 1 if msg_type.lower() == "group" else 0
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "params": {
+                    "message": call.data["message"],
+                    "threadIds": thread_ids
+                },
+                "type": msg_type_num
+            }
+
+            _LOGGER.debug("Gửi payload đến forwardMessageByAccount: %s", payload)
+            url = f"{zalo_server}/api/forwardMessageByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi chuyển tiếp tin nhắn: %s", resp.text)
+            await show_result_notification(hass, "chuyển tiếp tin nhắn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_forward_message: %s", e)
+            await show_result_notification(hass, "chuyển tiếp tin nhắn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "forward_message", async_forward_message_service,
+                                 schema=SERVICE_FORWARD_MESSAGE_SCHEMA)
+
+    async def async_parse_link_service(call):
+        _LOGGER.debug("Dịch vụ async_parse_link được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "link": call.data["link"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/parseLinkByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi phân tích link: %s", resp.text)
+            await show_result_notification(hass, "phân tích link", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_parse_link: %s", e)
+            await show_result_notification(hass, "phân tích link", None, error=e)
+
+    hass.services.async_register(DOMAIN, "parse_link", async_parse_link_service,
+                                 schema=SERVICE_PARSE_LINK_SCHEMA)
+
+    async def async_send_card_service(call):
+        _LOGGER.debug("Dịch vụ async_send_card được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "options": {
+                    "userId": call.data["user_id"]
+                }
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/sendCardByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi gửi danh thiếp: %s", resp.text)
+            await show_result_notification(hass, "gửi danh thiếp", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_send_card: %s", e)
+            await show_result_notification(hass, "gửi danh thiếp", None, error=e)
+
+    hass.services.async_register(DOMAIN, "send_card", async_send_card_service,
+                                 schema=SERVICE_SEND_CARD_SCHEMA)
+
+    async def async_send_link_service(call):
+        _LOGGER.debug("Dịch vụ async_send_link được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            options = {
+                "link": call.data["link"],
+                "msg": call.data.get("message", "")
+            }
+
+            if call.data.get("thumbnail"):
+                options["thumbnail"] = call.data["thumbnail"]
+
+            payload = {
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "options": options
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/sendLinkByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi gửi link: %s", resp.text)
+            await show_result_notification(hass, "gửi link", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_send_link: %s", e)
+            await show_result_notification(hass, "gửi link", None, error=e)
+
+    hass.services.async_register(DOMAIN, "send_link", async_send_link_service,
+                                 schema=SERVICE_SEND_LINK_SCHEMA)
+
+    async def async_get_stickers_service(call):
+        _LOGGER.debug("Dịch vụ async_get_stickers được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "query": call.data["query"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getStickersByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi tìm kiếm sticker: %s", resp.text)
+            await show_result_notification(hass, "tìm kiếm sticker", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_stickers: %s", e)
+            await show_result_notification(hass, "tìm kiếm sticker", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_stickers", async_get_stickers_service,
+                                 schema=SERVICE_GET_STICKERS_SCHEMA)
+
+    async def async_get_stickers_detail_service(call):
+        _LOGGER.debug("Dịch vụ async_get_stickers_detail được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Chuyển đổi stickerId sang số nguyên
+            try:
+                sticker_id = int(call.data["sticker_id"])
+            except ValueError:
+                sticker_id = call.data["sticker_id"]
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "stickerId": sticker_id
+            }
+
+            _LOGGER.debug("Gửi payload đến getStickersDetailByAccount: %s", payload)
+            url = f"{zalo_server}/api/getStickersDetailByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy chi tiết sticker: %s", resp.text)
+            await show_result_notification(hass, "lấy chi tiết sticker", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_stickers_detail: %s", e)
+            await show_result_notification(hass, "lấy chi tiết sticker", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_stickers_detail", async_get_stickers_detail_service,
+                                 schema=SERVICE_GET_STICKERS_DETAIL_SCHEMA)
+
+    async def async_send_video_service(call):
+        _LOGGER.debug("Dịch vụ async_send_video được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            options = {
+                "videoUrl": call.data["video_url"],
+                "msg": call.data.get("message", "")
+            }
+
+            if call.data.get("thumbnail_url"):
+                options["thumbnailUrl"] = call.data["thumbnail_url"]
+
+            payload = {
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "options": options
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/sendVideoByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi gửi video: %s", resp.text)
+            await show_result_notification(hass, "gửi video", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_send_video: %s", e)
+            await show_result_notification(hass, "gửi video", None, error=e)
+
+    hass.services.async_register(DOMAIN, "send_video", async_send_video_service,
+                                 schema=SERVICE_SEND_VIDEO_SCHEMA)
+
+    async def async_create_note_group_service(call):
+        _LOGGER.debug("Dịch vụ async_create_note_group được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "groupId": call.data["group_id"],
+                "accountSelection": call.data["account_selection"],
+                "options": {
+                    "title": call.data["title"],
+                    "pinAct": call.data.get("pin_act", True)
+                }
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/createNoteGroupByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi tạo ghi chú nhóm: %s", resp.text)
+            await show_result_notification(hass, "tạo ghi chú nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_create_note_group: %s", e)
+            await show_result_notification(hass, "tạo ghi chú nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "create_note_group", async_create_note_group_service,
+                                 schema=SERVICE_CREATE_NOTE_GROUP_SCHEMA)
+
+    async def async_edit_note_group_service(call):
+        _LOGGER.debug("Dịch vụ async_edit_note_group được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "groupId": call.data["group_id"],
+                "accountSelection": call.data["account_selection"],
+                "options": {
+                    "topicId": call.data["topic_id"],
+                    "title": call.data["title"]
+                }
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/editNoteGroupByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi sửa ghi chú nhóm: %s", resp.text)
+            await show_result_notification(hass, "sửa ghi chú nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_edit_note_group: %s", e)
+            await show_result_notification(hass, "sửa ghi chú nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "edit_note_group", async_edit_note_group_service,
+                                 schema=SERVICE_EDIT_NOTE_GROUP_SCHEMA)
+
+    async def async_get_list_board_service(call):
+        _LOGGER.debug("Dịch vụ async_get_list_board được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "groupId": call.data["group_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getListBoardByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách bảng tin nhóm: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách bảng tin nhóm", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_list_board: %s", e)
+            await show_result_notification(hass, "lấy danh sách bảng tin nhóm", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_list_board", async_get_list_board_service,
+                                 schema=SERVICE_GET_LIST_BOARD_SCHEMA)
+
+    async def async_create_poll_service(call):
+        _LOGGER.debug("Dịch vụ async_create_poll được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            options_list = call.data["options"].split(",")
+            options_list = [opt.strip() for opt in options_list]
+
+            payload = {
+                "groupId": call.data["group_id"],
+                "accountSelection": call.data["account_selection"],
+                "options": {
+                    "question": call.data["question"],
+                    "options": options_list,
+                    "allowMultiChoices": call.data.get("allow_multi_choices", False)
+                }
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/createPollByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi tạo bình chọn: %s", resp.text)
+            await show_result_notification(hass, "tạo bình chọn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_create_poll: %s", e)
+            await show_result_notification(hass, "tạo bình chọn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "create_poll", async_create_poll_service,
+                                 schema=SERVICE_CREATE_POLL_SCHEMA)
+
+    async def async_get_poll_detail_service(call):
+        _LOGGER.debug("Dịch vụ async_get_poll_detail được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "pollId": call.data["poll_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getPollDetailByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy chi tiết bình chọn: %s", resp.text)
+            await show_result_notification(hass, "lấy chi tiết bình chọn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_poll_detail: %s", e)
+            await show_result_notification(hass, "lấy chi tiết bình chọn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_poll_detail", async_get_poll_detail_service,
+                                 schema=SERVICE_GET_POLL_DETAIL_SCHEMA)
+
+    async def async_lock_poll_service(call):
+        _LOGGER.debug("Dịch vụ async_lock_poll được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "pollId": int(call.data["poll_id"])
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/lockPollByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi khóa bình chọn: %s", resp.text)
+            await show_result_notification(hass, "khóa bình chọn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_lock_poll: %s", e)
+            await show_result_notification(hass, "khóa bình chọn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "lock_poll", async_lock_poll_service,
+                                 schema=SERVICE_LOCK_POLL_SCHEMA)
+
+    async def async_edit_reminder_service(call):
+        _LOGGER.debug("Dịch vụ async_edit_reminder được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"],
+                "options": {
+                    "topicId": call.data["topic_id"],
+                    "title": call.data["title"]
+                }
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/editReminderByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi sửa lời nhắc: %s", resp.text)
+            await show_result_notification(hass, "sửa lời nhắc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_edit_reminder: %s", e)
+            await show_result_notification(hass, "sửa lời nhắc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "edit_reminder", async_edit_reminder_service,
+                                 schema=SERVICE_EDIT_REMINDER_SCHEMA)
+
+    async def async_get_reminder_service(call):
+        _LOGGER.debug("Dịch vụ async_get_reminder được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "reminderId": call.data["reminder_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getReminderByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy thông tin nhắc hẹn: %s", resp.text)
+            await show_result_notification(hass, "lấy thông tin nhắc hẹn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_reminder: %s", e)
+            await show_result_notification(hass, "lấy thông tin nhắc hẹn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_reminder", async_get_reminder_service,
+                                 schema=SERVICE_GET_REMINDER_SCHEMA)
+
+    async def async_get_list_reminder_service(call):
+        _LOGGER.debug("Dịch vụ async_get_list_reminder được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Chuyển đổi type từ chuỗi sang số (0 cho user, 1 cho group)
+            reminder_type = call.data.get("type", "0")
+            reminder_type_num = 1 if reminder_type.lower() == "group" else 0
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "threadId": call.data["thread_id"],
+                "type": reminder_type_num
+            }
+
+            # Thêm options nếu có
+            if "options" in call.data:
+                payload["options"] = call.data["options"]
+
+            _LOGGER.debug("Gửi payload đến getListReminderByAccount: %s", payload)
+            url = f"{zalo_server}/api/getListReminderByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách lời nhắc: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách lời nhắc", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_list_reminder: %s", e)
+            await show_result_notification(hass, "lấy danh sách lời nhắc", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_list_reminder", async_get_list_reminder_service,
+                                 schema=SERVICE_GET_LIST_REMINDER_SCHEMA)
+
+    async def async_get_reminder_responses_service(call):
+        _LOGGER.debug("Dịch vụ async_get_reminder_responses được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "reminderId": call.data["reminder_id"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/getReminderResponsesByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách phản hồi nhắc hẹn: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách phản hồi nhắc hẹn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_reminder_responses: %s", e)
+            await show_result_notification(hass, "lấy danh sách phản hồi nhắc hẹn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_reminder_responses", async_get_reminder_responses_service,
+                                 schema=SERVICE_GET_REMINDER_RESPONSES_SCHEMA)
+
+    async def async_add_quick_message_service(call):
+        _LOGGER.debug("Dịch vụ async_add_quick_message được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Tạo payload đúng định dạng theo yêu cầu của API
+            add_payload = {
+                "keyword": call.data["keyword"],
+                "title": call.data["title"],
+                "message": {
+                    "title": call.data["title"],
+                    "params": ""
+                }
+            }
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "addPayload": add_payload
+            }
+
+            _LOGGER.debug("Gửi payload đến addQuickMessageByAccount: %s", payload)
+            url = f"{zalo_server}/api/addQuickMessageByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi thêm tin nhắn nhanh: %s", resp.text)
+            await show_result_notification(hass, "thêm tin nhắn nhanh", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_add_quick_message: %s", e)
+            await show_result_notification(hass, "thêm tin nhắn nhanh", None, error=e)
+
+    hass.services.async_register(DOMAIN, "add_quick_message", async_add_quick_message_service,
+                                 schema=SERVICE_ADD_QUICK_MESSAGE_SCHEMA)
+
+    async def async_get_quick_message_service(call):
+        _LOGGER.debug("Dịch vụ async_get_quick_message được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+
+            _LOGGER.debug("Gửi payload đến getQuickMessageByAccount: %s", payload)
+            url = f"{zalo_server}/api/getQuickMessageByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách tin nhắn nhanh: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách tin nhắn nhanh", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_quick_message: %s", e)
+            await show_result_notification(hass, "lấy danh sách tin nhắn nhanh", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_quick_message", async_get_quick_message_service,
+                                 schema=SERVICE_GET_QUICK_MESSAGE_SCHEMA)
+
+    async def async_remove_quick_message_service(call):
+        _LOGGER.debug("Dịch vụ async_remove_quick_message được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Chuyển đổi item_ids từ chuỗi sang mảng số nguyên
+            item_ids = [int(item_id.strip()) for item_id in call.data["item_ids"].split(',')]
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "itemIds": item_ids if len(item_ids) > 1 else item_ids[0]
+            }
+
+            _LOGGER.debug("Gửi payload đến removeQuickMessageByAccount: %s", payload)
+            url = f"{zalo_server}/api/removeQuickMessageByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi xóa tin nhắn nhanh: %s", resp.text)
+            await show_result_notification(hass, "xóa tin nhắn nhanh", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_remove_quick_message: %s", e)
+            await show_result_notification(hass, "xóa tin nhắn nhanh", None, error=e)
+
+    hass.services.async_register(DOMAIN, "remove_quick_message", async_remove_quick_message_service,
+                                 schema=SERVICE_REMOVE_QUICK_MESSAGE_SCHEMA)
+
+    async def async_update_quick_message_service(call):
+        _LOGGER.debug("Dịch vụ async_update_quick_message được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Tạo payload đúng định dạng theo yêu cầu của API
+            update_payload = {
+                "keyword": call.data["keyword"],
+                "title": call.data["title"],
+                "message": {
+                    "title": call.data["title"],
+                    "params": ""
+                }
+            }
+
+            # Chuyển đổi item_id sang số nguyên nếu cần
+            try:
+                item_id = int(call.data["item_id"])
+            except ValueError:
+                item_id = call.data["item_id"]
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "itemId": item_id,
+                "updatePayload": update_payload
+            }
+
+            _LOGGER.debug("Gửi payload đến updateQuickMessageByAccount: %s", payload)
+            url = f"{zalo_server}/api/updateQuickMessageByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi cập nhật tin nhắn nhanh: %s", resp.text)
+            await show_result_notification(hass, "cập nhật tin nhắn nhanh", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_update_quick_message: %s", e)
+            await show_result_notification(hass, "cập nhật tin nhắn nhanh", None, error=e)
+
+    hass.services.async_register(DOMAIN, "update_quick_message", async_update_quick_message_service,
+                                 schema=SERVICE_UPDATE_QUICK_MESSAGE_SCHEMA)
+
+    async def async_get_labels_service(call):
+        _LOGGER.debug("Dịch vụ async_get_labels được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+
+            _LOGGER.debug("Gửi payload đến getLabelsByAccount: %s", payload)
+            url = f"{zalo_server}/api/getLabelsByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách nhãn: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách nhãn", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_labels: %s", e)
+            await show_result_notification(hass, "lấy danh sách nhãn", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_labels", async_get_labels_service,
+                                 schema=SERVICE_GET_LABELS_SCHEMA)
+
+    async def async_block_view_feed_service(call):
+        _LOGGER.debug("Dịch vụ async_block_view_feed được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Đảm bảo isBlockFeed là giá trị boolean
+            is_block_str = str(call.data["is_block_feed"]).lower()
+            is_block = is_block_str == "true" or is_block_str == "1" or is_block_str == "yes"
+
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "userId": call.data["user_id"],
+                "isBlockFeed": is_block
+            }
+
+            _LOGGER.debug("Gửi payload đến blockViewFeedByAccount: %s", payload)
+            url = f"{zalo_server}/api/blockViewFeedByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi chặn/bỏ chặn xem nhật ký: %s", resp.text)
+            await show_result_notification(hass, "chặn/bỏ chặn xem nhật ký", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_block_view_feed: %s", e)
+            await show_result_notification(hass, "chặn/bỏ chặn xem nhật ký", None, error=e)
+
+    hass.services.async_register(DOMAIN, "block_view_feed", async_block_view_feed_service,
+                                 schema=SERVICE_BLOCK_VIEW_FEED_SCHEMA)
+
+    async def async_change_account_avatar_service(call):
+        _LOGGER.debug("Dịch vụ async_change_account_avatar được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "avatarSource": call.data["avatar_source"]
+            }
+
+            _LOGGER.debug("Gửi payload đến changeAccountAvatarByAccount: %s", payload)
+            url = f"{zalo_server}/api/changeAccountAvatarByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi thay đổi ảnh đại diện: %s", resp.text)
+            await show_result_notification(hass, "thay đổi ảnh đại diện", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_change_account_avatar: %s", e)
+            await show_result_notification(hass, "thay đổi ảnh đại diện", None, error=e)
+
+    hass.services.async_register(DOMAIN, "change_account_avatar", async_change_account_avatar_service,
+                                 schema=SERVICE_CHANGE_ACCOUNT_AVATAR_SCHEMA)
+
+    async def async_get_avatar_list_service(call):
+        _LOGGER.debug("Dịch vụ async_get_avatar_list được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+
+            # Thêm các tham số count và page nếu có
+            payload = {
+                "accountSelection": call.data["account_selection"]
+            }
+
+            if "count" in call.data:
+                try:
+                    payload["count"] = int(call.data["count"])
+                except ValueError:
+                    payload["count"] = call.data["count"]
+
+            if "page" in call.data:
+                try:
+                    payload["page"] = int(call.data["page"])
+                except ValueError:
+                    payload["page"] = call.data["page"]
+
+            _LOGGER.debug("Gửi payload đến getAvatarListByAccount: %s", payload)
+            url = f"{zalo_server}/api/getAvatarListByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi lấy danh sách ảnh đại diện: %s", resp.text)
+            await show_result_notification(hass, "lấy danh sách ảnh đại diện", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_get_avatar_list: %s", e)
+            await show_result_notification(hass, "lấy danh sách ảnh đại diện", None, error=e)
+
+    hass.services.async_register(DOMAIN, "get_avatar_list", async_get_avatar_list_service,
+                                 schema=SERVICE_GET_AVATAR_LIST_SCHEMA)
+
+    async def async_last_online_service(call):
+        _LOGGER.debug("Dịch vụ async_last_online được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "accountSelection": call.data["account_selection"],
+                "userId": call.data["user_id"]  # Sửa từ uid thành userId theo yêu cầu của API
+            }
+
+            _LOGGER.debug("Gửi payload đến lastOnlineByAccount: %s", payload)
+            url = f"{zalo_server}/api/lastOnlineByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Phản hồi xem thời gian hoạt động cuối: %s", resp.text)
+            await show_result_notification(hass, "xem thời gian hoạt động cuối", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_last_online: %s", e)
+            await show_result_notification(hass, "xem thời gian hoạt động cuối", None, error=e)
+
+    hass.services.async_register(DOMAIN, "last_online", async_last_online_service,
+                                 schema=SERVICE_LAST_ONLINE_SCHEMA)
+
     device_registry = dr.async_get(hass)
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
@@ -1268,7 +3557,7 @@ async def async_setup_entry(hass, entry):
         manufacturer="Smarthome Black",
         name="Zalo Bot",
         model="Zalo Bot",
-        sw_version="2025.7.23"
+        sw_version="2025.8.1"
     )
     return True
 
