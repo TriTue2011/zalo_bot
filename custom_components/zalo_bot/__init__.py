@@ -1,4 +1,5 @@
 """Zalo Bot integration."""
+import asyncio
 import logging
 import os
 import shutil
@@ -437,9 +438,13 @@ SERVICE_GET_STICKERS_DETAIL_SCHEMA = vol.Schema({
 
 SERVICE_SEND_VIDEO_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
-    vol.Required("video_url"): cv.string,
+    vol.Required("video_path_or_url"): cv.string,
     vol.Optional("thumbnail_url", default=""): cv.string,
     vol.Optional("message", default=""): cv.string,
+    vol.Optional("width", default=1280): cv.positive_int,
+    vol.Optional("height", default=720): cv.positive_int,
+    vol.Optional("ttl", default=0): cv.positive_int,
+    vol.Optional("type", default="0"): cv.string,
     vol.Required("account_selection"): cv.string,
 })
 
@@ -554,6 +559,47 @@ WWW_DIR = None
 PUBLIC_DIR = None
 
 
+def get_video_duration_ms(video_path):
+    """
+    Lấy duration chính xác của video bằng ffprobe
+
+    Args:
+        video_path: Đường dẫn đến file video
+
+    Returns:
+        int: Duration tính bằng milliseconds
+    """
+    if not os.path.isfile(video_path):
+        _LOGGER.warning(f"Video file not found: {video_path}")
+        return 10000
+
+    try:
+        import subprocess
+        cmd = [
+            'ffprobe', '-v', 'quiet', '-print_format', 'json',
+            '-show_format', video_path
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+
+        if result.returncode == 0:
+            import json
+            data = json.loads(result.stdout)
+            duration_seconds = float(data['format']['duration'])
+            duration_ms = max(int(duration_seconds * 1000), 1000)
+            _LOGGER.info(
+                f"ffprobe detected duration: {duration_seconds:.2f}s = "
+                f"{duration_ms}ms for {os.path.basename(video_path)}"
+            )
+            return duration_ms
+        else:
+            _LOGGER.warning(f"ffprobe failed for {video_path}: {result.stderr}")
+            return 10000
+
+    except Exception as e:
+        _LOGGER.warning(f"ffprobe error for {video_path}: {e}")
+        return 10000
+
+
 def find_free_port():
     """Tìm một cổng trống."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -590,7 +636,22 @@ def serve_file_temporarily(file_path, duration=60):
                             content_type = "image/gif"
                         elif file_path.endswith(".webp"):
                             content_type = "image/webp"
+                        elif file_path.endswith(".mp4"):
+                            content_type = "video/mp4"
+                        elif file_path.endswith(".avi"):
+                            content_type = "video/avi"
+                        elif file_path.endswith(".mov"):
+                            content_type = "video/quicktime"
+                        elif file_path.endswith(".webm"):
+                            content_type = "video/webm"
+                        elif file_path.endswith(".mp3"):
+                            content_type = "audio/mpeg"
+                        elif file_path.endswith(".wav"):
+                            content_type = "audio/wav"
                         self.send_header("Content-type", content_type)
+                        # Thêm Content-Length để hỗ trợ HEAD request
+                        file_size = os.path.getsize(file_path)
+                        self.send_header("Content-Length", str(file_size))
                         self.end_headers()
                         self.wfile.write(file.read())
                 except Exception as e:
@@ -602,6 +663,47 @@ def serve_file_temporarily(file_path, duration=60):
                 self.send_response(404)
                 self.end_headers()
                 self.wfile.write(b"File Not Found")
+
+        def do_HEAD(self):
+            # Hỗ trợ HEAD request để kiểm tra file có tồn tại không
+            if self.path == f"/{encoded_filename}" or self.path == "/":
+                try:
+                    if os.path.isfile(file_path):
+                        self.send_response(200)
+                        content_type = "image/jpeg"  # Mặc định
+                        if file_path.endswith(".png"):
+                            content_type = "image/png"
+                        elif file_path.endswith(".gif"):
+                            content_type = "image/gif"
+                        elif file_path.endswith(".webp"):
+                            content_type = "image/webp"
+                        elif file_path.endswith(".mp4"):
+                            content_type = "video/mp4"
+                        elif file_path.endswith(".avi"):
+                            content_type = "video/avi"
+                        elif file_path.endswith(".mov"):
+                            content_type = "video/quicktime"
+                        elif file_path.endswith(".webm"):
+                            content_type = "video/webm"
+                        elif file_path.endswith(".mp3"):
+                            content_type = "audio/mpeg"
+                        elif file_path.endswith(".wav"):
+                            content_type = "audio/wav"
+                        self.send_header("Content-type", content_type)
+                        # Thêm Content-Length cho HEAD request
+                        file_size = os.path.getsize(file_path)
+                        self.send_header("Content-Length", str(file_size))
+                        self.end_headers()
+                    else:
+                        self.send_response(404)
+                        self.end_headers()
+                except Exception as e:
+                    _LOGGER.error(f"Lỗi khi xử lý HEAD request: {str(e)}")
+                    self.send_response(500)
+                    self.end_headers()
+            else:
+                self.send_response(404)
+                self.end_headers()
 
         def log_message(self, format, *args):
             # Tắt log để không làm ảnh hưởng đến log của Home Assistant
@@ -975,6 +1077,142 @@ async def async_setup_entry(hass, entry):
         except Exception as e:
             _LOGGER.error("Exception trong async_send_image_service: %s", e, exc_info=True)
             await show_result_notification(hass, "gửi ảnh", None, error=e)
+
+    async def async_send_video_service(call):
+        _LOGGER.debug("Dịch vụ async_send_video được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            msg_type = call.data.get("type", "0")
+            video_path = call.data["video_path_or_url"]
+            public_url = None
+
+            # Kiểm tra nếu input là URL hay file local
+            if video_path.startswith("http://") or video_path.startswith("https://"):
+                public_url = video_path
+            else:
+                # Xử lý file local
+                if not os.path.isfile(video_path):
+                    error_msg = f"Không tìm thấy tệp video: {video_path}"
+                    await show_result_notification(hass, "gửi video", None, error=error_msg)
+                    return
+
+                try:
+                    # Luôn dùng HTTP server tạm thời
+                    _LOGGER.info(f"Sử dụng máy chủ HTTP tạm thời để phục vụ tệp video: {video_path}")
+                    public_url = await hass.async_add_executor_job(
+                        serve_file_temporarily, video_path, 90
+                    )
+                except Exception as e:
+                    error_msg = f"Lỗi khi xử lý tệp video: {str(e)}"
+                    _LOGGER.error(error_msg)
+                    await show_result_notification(hass, "gửi video", None, error=error_msg)
+                    return
+
+            if not public_url:
+                await show_result_notification(hass, "gửi video", None, error="Không thể tạo URL công khai cho video.")
+                return
+
+            # Xử lý thumbnail URL nếu là file local
+            thumbnail_url = call.data.get("thumbnail_url", public_url)
+            if thumbnail_url and not (thumbnail_url.startswith("http://") or thumbnail_url.startswith("https://")):
+                # Thumbnail là file local, cần tạo URL tạm thời
+                if os.path.isfile(thumbnail_url):
+                    try:
+                        # Luôn dùng HTTP server tạm thời cho thumbnail
+                        thumbnail_url = await hass.async_add_executor_job(
+                            serve_file_temporarily, thumbnail_url, 90
+                        )
+                    except Exception as e:
+                        _LOGGER.warning("Không thể xử lý thumbnail file local: %s, dùng URL video làm thumbnail", e)
+                        thumbnail_url = public_url
+                else:
+                    _LOGGER.warning("Không tìm thấy thumbnail file: %s, dùng URL video làm thumbnail", thumbnail_url)
+                    thumbnail_url = public_url
+
+            # Luôn auto-detect duration (không cho user nhập)
+            if video_path.startswith("http://") or video_path.startswith("https://"):
+                # Nếu là URL, để duration mặc định 10000ms
+                duration = 10000
+            else:
+                # Nếu là file local, auto-detect duration
+                try:
+                    duration = get_video_duration_ms(video_path)
+                    _LOGGER.info(f"Auto-detect video duration: {duration}ms từ file {video_path}")
+                except Exception as e:
+                    _LOGGER.warning(f"Không thể auto-detect duration từ {video_path}: {e}, dùng 10000ms")
+                    duration = 10000
+
+            options = {
+                "videoUrl": public_url,
+                "thumbnailUrl": thumbnail_url,
+                "msg": call.data.get("message", ""),
+                "duration": int(duration),
+                "width": int(call.data.get("width", 1280)),
+                "height": int(call.data.get("height", 720)),
+                "ttl": int(call.data.get("ttl", 0))
+            }
+
+            # Backend expect type: ThreadType enum (0 = User, 1 = Group)
+            thread_type_num = 1 if msg_type == "1" else 0
+
+            payload = {
+                "threadId": str(call.data["thread_id"]),  # Đảm bảo là string
+                "accountSelection": str(call.data["account_selection"]),  # Đảm bảo là string
+                "options": options,
+                "type": thread_type_num  # Backend expect số ThreadType enum
+            }
+
+            _LOGGER.info("Video URL để gửi: %s", public_url)
+            _LOGGER.info("Thumbnail URL để gửi: %s", thumbnail_url)
+
+            # Kiểm tra xem URL có accessible không
+            try:
+                # Đợi một chút để server tạm thời sẵn sàng
+                await asyncio.sleep(0.1)
+                test_resp = await hass.async_add_executor_job(
+                    lambda: session.head(public_url, timeout=10)
+                )
+                _LOGGER.info("Test video URL accessibility - Status: %s, Headers: %s",
+                             test_resp.status_code, dict(test_resp.headers))
+                if test_resp.status_code != 200:
+                    _LOGGER.warning("Video URL không accessible từ backend: %s", test_resp.status_code)
+                    # Thử lại với GET request nếu HEAD không hoạt động
+                    try:
+                        test_resp_get = await hass.async_add_executor_job(
+                            lambda: session.get(public_url, timeout=10, stream=True)
+                        )
+                        _LOGGER.info("Test video URL với GET - Status: %s", test_resp_get.status_code)
+                        test_resp_get.close()
+                    except Exception as get_error:
+                        _LOGGER.error("GET test cũng thất bại: %s", get_error)
+            except Exception as e:
+                _LOGGER.error("Không thể test video URL accessibility: %s", e)
+
+            _LOGGER.debug("Options đầy đủ: %s", options)
+            _LOGGER.debug("Gửi payload đến sendVideoByAccount: %s", payload)
+            url = f"{zalo_server}/api/sendVideoByAccount"
+            _LOGGER.debug("URL đầy đủ: %s", url)
+
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(url, json=payload)
+            )
+            _LOGGER.info("Response status: %s", resp.status_code)
+            _LOGGER.info("Response headers: %s", dict(resp.headers))
+            _LOGGER.info("Response text: %s", resp.text)
+
+            try:
+                response_json = resp.json()
+                _LOGGER.info("Response JSON: %s", response_json)
+                if not response_json.get('success', False):
+                    error_detail = response_json.get('error', 'Unknown error')
+                    _LOGGER.error("Backend trả về lỗi: %s", error_detail)
+            except Exception as json_error:
+                _LOGGER.error("Không thể parse JSON response: %s", json_error)
+
+            await show_result_notification(hass, "gửi video", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_send_video: %s", e)
+            await show_result_notification(hass, "gửi video", None, error=e)
     hass.services.async_register(
         DOMAIN, "send_message", async_send_message_service, schema=SERVICE_SEND_MESSAGE_SCHEMA
     )
@@ -983,6 +1221,9 @@ async def async_setup_entry(hass, entry):
     )
     hass.services.async_register(
         DOMAIN, "send_image", async_send_image_service, schema=SERVICE_SEND_IMAGE_SCHEMA
+    )
+    hass.services.async_register(
+        DOMAIN, "send_video", async_send_video_service, schema=SERVICE_SEND_VIDEO_SCHEMA
     )
 
     # Các schema mới cho các dịch vụ bổ sung
@@ -3010,35 +3251,6 @@ async def async_setup_entry(hass, entry):
 
     hass.services.async_register(DOMAIN, "get_stickers_detail", async_get_stickers_detail_service,
                                  schema=SERVICE_GET_STICKERS_DETAIL_SCHEMA)
-
-    async def async_send_video_service(call):
-        _LOGGER.debug("Dịch vụ async_send_video được gọi với: %s", call.data)
-        try:
-            await hass.async_add_executor_job(zalo_login)
-            options = {
-                "videoUrl": call.data["video_url"],
-                "msg": call.data.get("message", "")
-            }
-
-            if call.data.get("thumbnail_url"):
-                options["thumbnailUrl"] = call.data["thumbnail_url"]
-
-            payload = {
-                "threadId": call.data["thread_id"],
-                "accountSelection": call.data["account_selection"],
-                "options": options
-            }
-            resp = await hass.async_add_executor_job(
-                lambda: session.post(f"{zalo_server}/api/sendVideoByAccount", json=payload)
-            )
-            _LOGGER.info("Phản hồi gửi video: %s", resp.text)
-            await show_result_notification(hass, "gửi video", resp)
-        except Exception as e:
-            _LOGGER.error("Lỗi trong async_send_video: %s", e)
-            await show_result_notification(hass, "gửi video", None, error=e)
-
-    hass.services.async_register(DOMAIN, "send_video", async_send_video_service,
-                                 schema=SERVICE_SEND_VIDEO_SCHEMA)
 
     async def async_create_note_group_service(call):
         _LOGGER.debug("Dịch vụ async_create_note_group được gọi với: %s", call.data)
