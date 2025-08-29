@@ -2014,3 +2014,19 @@ last_online:
       required: true
       selector:
         text:
+
+send_typing_event:
+  description: Gửi thông báo đang soạn tin nhắn
+  fields:
+    thread_id:
+      description: ThreadId nhận thông báo (group sẽ không hiện)
+      example: "5841349563795111111"
+      required: true
+      selector:
+        text:
+    account_selection:
+      description: Số điện thoại hoặc ID tài khoản gửi
+      example: "+84123456789"
+      required: true
+      selector:
+        text:

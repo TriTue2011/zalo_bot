@@ -553,6 +553,11 @@ SERVICE_LAST_ONLINE_SCHEMA = vol.Schema({
     vol.Required("account_selection"): cv.string,
 })
 
+SERVICE_SEND_TYPING_EVENT_SCHEMA = vol.Schema({
+    vol.Required("thread_id"): cv.string,
+    vol.Required("account_selection"): cv.string,
+})
+
 session = requests.Session()
 zalo_server = None
 WWW_DIR = None
@@ -3762,6 +3767,26 @@ async def async_setup_entry(hass, entry):
     hass.services.async_register(DOMAIN, "last_online", async_last_online_service,
                                  schema=SERVICE_LAST_ONLINE_SCHEMA)
 
+    async def async_send_typing_event_service(call):
+        _LOGGER.debug("Dịch vụ async_send_typing_event được gọi với: %s", call.data)
+        try:
+            await hass.async_add_executor_job(zalo_login)
+            payload = {
+                "threadId": call.data["thread_id"],
+                "accountSelection": call.data["account_selection"]
+            }
+            resp = await hass.async_add_executor_job(
+                lambda: session.post(f"{zalo_server}/api/sendTypingEventByAccount", json=payload)
+            )
+            _LOGGER.info("Phản hồi gửi thông báo typing: %s", resp.text)
+            await show_result_notification(hass, "gửi thông báo typing", resp)
+        except Exception as e:
+            _LOGGER.error("Lỗi trong async_send_typing_event: %s", e)
+            await show_result_notification(hass, "gửi thông báo typing", None, error=e)    
+
+    hass.services.async_register(DOMAIN, "send_typing_event", async_send_typing_event_service,
+                                 schema=SERVICE_SEND_TYPING_EVENT_SCHEMA)
+
     device_registry = dr.async_get(hass)
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
@@ -3769,7 +3794,7 @@ async def async_setup_entry(hass, entry):
         manufacturer="Smarthome Black",
         name="Zalo Bot",
         model="Zalo Bot",
-        sw_version="2025.8.21"
+        sw_version="2025.8.30"
     )
     return True
 
