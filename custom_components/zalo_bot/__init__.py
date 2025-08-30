@@ -35,6 +35,7 @@ SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
+    vol.Optional("ttl", default=0): cv.positive_int,
 })
 
 SERVICE_SEND_FILE_SCHEMA = vol.Schema({
@@ -43,13 +44,16 @@ SERVICE_SEND_FILE_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
+    vol.Optional("ttl", default=0): cv.positive_int,
 })
 
 SERVICE_SEND_IMAGE_SCHEMA = vol.Schema({
     vol.Required("image_path"): cv.string,
+    vol.Optional("message"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
+    vol.Optional("ttl", default=0): cv.positive_int,
 })
 
 SERVICE_GET_LOGGED_ACCOUNTS_SCHEMA = vol.Schema({})
@@ -946,7 +950,10 @@ async def async_setup_entry(hass, entry):
             msg_type = call.data.get("type", "0")
             # Sửa lại type: nếu là group thì dùng 1 (số), nếu là user thì 0
             payload = {
-                "message": call.data["message"],
+                "message": {
+                    "msg": call.data["message"],
+                    "ttl": call.data.get("ttl", 0)  # THÊM TTL
+                },
                 "threadId": call.data["thread_id"],
                 "accountSelection": call.data["account_selection"],
                 "type": 1 if msg_type == "1" else 0
@@ -1009,7 +1016,8 @@ async def async_setup_entry(hass, entry):
                 "message": call.data.get("message", ""),
                 "threadId": call.data["thread_id"],
                 "accountSelection": call.data["account_selection"],
-                "type": "group" if msg_type == "1" else "user"
+                "type": "group" if msg_type == "1" else "user",
+                "ttl": call.data.get("ttl", 0)  # THÊM TTL
             }
             _LOGGER.debug("Gửi POST đến %s/api/sendFileByAccount với payload: %s",
                           zalo_server, payload)
@@ -1070,7 +1078,9 @@ async def async_setup_entry(hass, entry):
                 "imagePath": public_url,
                 "threadId": call.data["thread_id"],
                 "accountSelection": call.data["account_selection"],
-                "type": "group" if msg_type == "1" else "user"
+                "type": "group" if msg_type == "1" else "user",
+                "ttl": call.data.get("ttl", 0),  # THÊM TTL
+                "message": call.data.get("message", "") 
             }
             _LOGGER.debug("Gửi POST đến %s/api/sendImageByAccount với payload: %s",
                           zalo_server, payload)
@@ -3794,7 +3804,7 @@ async def async_setup_entry(hass, entry):
         manufacturer="Smarthome Black",
         name="Zalo Bot",
         model="Zalo Bot",
-        sw_version="2025.8.30"
+        sw_version="2025.8.30a"
     )
     return True
 

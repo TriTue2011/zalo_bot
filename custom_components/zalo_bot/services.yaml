@@ -30,6 +30,9 @@ send_message:
               value: "0"
             - label: "Group"
               value: "1"
+    ttl:
+      description: "Thời gian tự xóa (milliseconds, 0=không xóa)"
+      default: 0
 send_file:
   description: Gửi một file bất kỳ qua URL hoặc từ đường dẫn cục bộ.
   fields:
@@ -68,6 +71,9 @@ send_file:
               value: "0"
             - label: "Group"
               value: "1"
+    ttl:
+      description: "Thời gian tự xóa (milliseconds, 0=không xóa)"
+      default: 0
 send_image:
   description: Gửi ảnh Zalo
   fields:
@@ -75,6 +81,12 @@ send_image:
       description: Đường dẫn file ảnh trên Home Assistant
       example: "/config/www/img.png"
       required: true
+      selector:
+        text:
+    message:
+      description: Nội dung tin nhắn gửi kèm ảnh (tùy chọn)
+      example: "Check out this image!"
+      required: false
       selector:
         text:
     thread_id:
@@ -100,7 +112,9 @@ send_image:
               value: "0"
             - label: "Group"
               value: "1"
-
+    ttl:
+      description: "Thời gian tự xóa (milliseconds, 0=không xóa)"
+      default: 0
 get_logged_accounts:
   description: Lấy danh sách tài khoản Zalo đã login
   fields: {}
