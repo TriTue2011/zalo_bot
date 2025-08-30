@@ -31,8 +31,14 @@ send_message:
             - label: "Group"
               value: "1"
     ttl:
-      description: "Thời gian tự xóa (milliseconds, 0=không xóa)"
+      description: Thời gian tự hủy (milliseconds)
+      example: 0
+      required: false
       default: 0
+      selector:
+        number:
+          min: 0
+          max: 86400000
 send_file:
   description: Gửi một file bất kỳ qua URL hoặc từ đường dẫn cục bộ.
   fields:
@@ -72,8 +78,14 @@ send_file:
             - label: "Group"
               value: "1"
     ttl:
-      description: "Thời gian tự xóa (milliseconds, 0=không xóa)"
+      description: Thời gian tự hủy (milliseconds)
+      example: 0
+      required: false
       default: 0
+      selector:
+        number:
+          min: 0
+          max: 86400000
 send_image:
   description: Gửi ảnh Zalo
   fields:
@@ -113,8 +125,14 @@ send_image:
             - label: "Group"
               value: "1"
     ttl:
-      description: "Thời gian tự xóa (milliseconds, 0=không xóa)"
+      description: Thời gian tự hủy (milliseconds)
+      example: 0
+      required: false
       default: 0
+      selector:
+        number:
+          min: 0
+          max: 86400000
 get_logged_accounts:
   description: Lấy danh sách tài khoản Zalo đã login
   fields: {}

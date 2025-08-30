@@ -35,7 +35,7 @@ SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
-    vol.Optional("ttl", default=0): cv.positive_int,
+    vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
 })
 
 SERVICE_SEND_FILE_SCHEMA = vol.Schema({
@@ -44,7 +44,7 @@ SERVICE_SEND_FILE_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
-    vol.Optional("ttl", default=0): cv.positive_int,
+    vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
 })
 
 SERVICE_SEND_IMAGE_SCHEMA = vol.Schema({
@@ -53,7 +53,7 @@ SERVICE_SEND_IMAGE_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
-    vol.Optional("ttl", default=0): cv.positive_int,
+    vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
 })
 
 SERVICE_GET_LOGGED_ACCOUNTS_SCHEMA = vol.Schema({})
@@ -447,7 +447,7 @@ SERVICE_SEND_VIDEO_SCHEMA = vol.Schema({
     vol.Optional("message", default=""): cv.string,
     vol.Optional("width", default=1280): cv.positive_int,
     vol.Optional("height", default=720): cv.positive_int,
-    vol.Optional("ttl", default=0): cv.positive_int,
+    vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
     vol.Optional("type", default="0"): cv.string,
     vol.Required("account_selection"): cv.string,
 })
