@@ -6,7 +6,6 @@ from .notification import show_result_notification
 
 _LOGGER = logging.getLogger(__name__)
 
-# Biến toàn cục cho module này
 hass = None
 session = None
 zalo_server = None
@@ -32,9 +31,14 @@ async def async_find_user_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi tìm người dùng: %s", resp.text)
         await show_result_notification(hass, "tìm người dùng", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_find_user: %s", e)
         await show_result_notification(hass, "tìm người dùng", None, error=e)
+        return {"error": str(e)}
 
 async def async_get_user_info_service(hass, call, zalo_login):
     """Dịch vụ lấy thông tin người dùng trên Zalo."""
@@ -50,9 +54,14 @@ async def async_get_user_info_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi lấy thông tin người dùng: %s", resp.text)
         await show_result_notification(hass, "lấy thông tin người dùng", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_user_info: %s", e)
         await show_result_notification(hass, "lấy thông tin người dùng", None, error=e)
+        return {"error": str(e)}
 
 async def async_send_friend_request_service(hass, call, zalo_login):
     """Dịch vụ gửi lời mời kết bạn trên Zalo."""
@@ -69,9 +78,14 @@ async def async_send_friend_request_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi gửi lời mời kết bạn: %s", resp.text)
         await show_result_notification(hass, "gửi lời mời kết bạn", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_friend_request: %s", e)
         await show_result_notification(hass, "gửi lời mời kết bạn", None, error=e)
+        return {"error": str(e)}
 
 async def async_accept_friend_request_service(hass, call, zalo_login):
     """Dịch vụ chấp nhận lời mời kết bạn trên Zalo."""
@@ -87,9 +101,14 @@ async def async_accept_friend_request_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi chấp nhận lời mời kết bạn: %s", resp.text)
         await show_result_notification(hass, "chấp nhận lời mời kết bạn", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_accept_friend_request: %s", e)
         await show_result_notification(hass, "chấp nhận lời mời kết bạn", None, error=e)
+        return {"error": str(e)}
 
 async def async_block_user_service(hass, call, zalo_login):
     """Dịch vụ chặn người dùng trên Zalo."""
@@ -105,9 +124,14 @@ async def async_block_user_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi chặn người dùng: %s", resp.text)
         await show_result_notification(hass, "chặn người dùng", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_block_user: %s", e)
         await show_result_notification(hass, "chặn người dùng", None, error=e)
+        return {"error": str(e)}
 
 async def async_unblock_user_service(hass, call, zalo_login):
     """Dịch vụ bỏ chặn người dùng trên Zalo."""
@@ -123,9 +147,14 @@ async def async_unblock_user_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi bỏ chặn người dùng: %s", resp.text)
         await show_result_notification(hass, "bỏ chặn người dùng", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_unblock_user: %s", e)
         await show_result_notification(hass, "bỏ chặn người dùng", None, error=e)
+        return {"error": str(e)}
 
 async def async_get_all_friends_service(hass, call, zalo_login):
     """Dịch vụ lấy danh sách bạn bè trên Zalo."""
@@ -140,9 +169,14 @@ async def async_get_all_friends_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi lấy danh sách bạn bè: %s", resp.text)
         await show_result_notification(hass, "lấy danh sách bạn bè", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_all_friends: %s", e)
         await show_result_notification(hass, "lấy danh sách bạn bè", None, error=e)
+        return {"error": str(e)}
 
 async def async_get_received_friend_requests_service(hass, call, zalo_login):
     """Dịch vụ lấy danh sách lời mời kết bạn đã nhận trên Zalo."""
@@ -157,9 +191,14 @@ async def async_get_received_friend_requests_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi lấy lời mời kết bạn đã nhận: %s", resp.text)
         await show_result_notification(hass, "lấy lời mời kết bạn đã nhận", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_received_friend_requests: %s", e)
         await show_result_notification(hass, "lấy lời mời kết bạn đã nhận", None, error=e)
+        return {"error": str(e)}
 
 async def async_get_sent_friend_requests_service(hass, call, zalo_login):
     """Dịch vụ lấy danh sách lời mời kết bạn đã gửi trên Zalo."""
@@ -174,9 +213,14 @@ async def async_get_sent_friend_requests_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi lấy lời mời kết bạn đã gửi: %s", resp.text)
         await show_result_notification(hass, "lấy lời mời kết bạn đã gửi", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_sent_friend_requests: %s", e)
         await show_result_notification(hass, "lấy lời mời kết bạn đã gửi", None, error=e)
+        return {"error": str(e)}
 
 async def async_undo_friend_request_service(hass, call, zalo_login):
     """Dịch vụ thu hồi lời mời kết bạn trên Zalo."""
@@ -192,9 +236,14 @@ async def async_undo_friend_request_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi thu hồi lời mời kết bạn: %s", resp.text)
         await show_result_notification(hass, "thu hồi lời mời kết bạn", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_undo_friend_request: %s", e)
         await show_result_notification(hass, "thu hồi lời mời kết bạn", None, error=e)
+        return {"error": str(e)}
 
 async def async_remove_friend_service(hass, call, zalo_login):
     """Dịch vụ hủy kết bạn trên Zalo."""
@@ -210,9 +259,14 @@ async def async_remove_friend_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi hủy kết bạn: %s", resp.text)
         await show_result_notification(hass, "hủy kết bạn", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_remove_friend: %s", e)
         await show_result_notification(hass, "hủy kết bạn", None, error=e)
+        return {"error": str(e)}
 
 async def async_change_friend_alias_service(hass, call, zalo_login):
     """Dịch vụ đổi biệt danh bạn bè trên Zalo."""
@@ -229,9 +283,14 @@ async def async_change_friend_alias_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi đổi biệt danh bạn bè: %s", resp.text)
         await show_result_notification(hass, "đổi biệt danh bạn bè", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_change_friend_alias: %s", e)
         await show_result_notification(hass, "đổi biệt danh bạn bè", None, error=e)
+        return {"error": str(e)}
 
 async def async_remove_friend_alias_service(hass, call, zalo_login):
     """Dịch vụ xóa biệt danh bạn bè trên Zalo."""
@@ -247,9 +306,14 @@ async def async_remove_friend_alias_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi xóa biệt danh bạn bè: %s", resp.text)
         await show_result_notification(hass, "xóa biệt danh bạn bè", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_remove_friend_alias: %s", e)
         await show_result_notification(hass, "xóa biệt danh bạn bè", None, error=e)
+        return {"error": str(e)}
 
 async def async_update_profile_service(hass, call, zalo_login):
     """Dịch vụ cập nhật thông tin cá nhân trên Zalo."""
@@ -259,7 +323,6 @@ async def async_update_profile_service(hass, call, zalo_login):
         payload = {
             "accountSelection": call.data["account_selection"]
         }
-
         if "name" in call.data:
             payload["name"] = call.data["name"]
         if "dob" in call.data:
@@ -272,45 +335,49 @@ async def async_update_profile_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi cập nhật thông tin cá nhân: %s", resp.text)
         await show_result_notification(hass, "cập nhật thông tin cá nhân", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_update_profile: %s", e)
         await show_result_notification(hass, "cập nhật thông tin cá nhân", None, error=e)
+        return {"error": str(e)}
 
 async def async_get_avatar_list_service(hass, call, zalo_login):
     """Dịch vụ lấy danh sách ảnh đại diện."""
     _LOGGER.debug("Dịch vụ async_get_avatar_list được gọi với: %s", call.data)
     try:
         await hass.async_add_executor_job(zalo_login)
-
-        # Thêm các tham số count và page nếu có
         payload = {
             "accountSelection": call.data["account_selection"]
         }
-
         if "count" in call.data:
             try:
                 payload["count"] = int(call.data["count"])
             except ValueError:
                 payload["count"] = call.data["count"]
-
         if "page" in call.data:
             try:
                 payload["page"] = int(call.data["page"])
             except ValueError:
                 payload["page"] = call.data["page"]
-
         _LOGGER.debug("Gửi payload đến getAvatarListByAccount: %s", payload)
         url = f"{zalo_server}/api/getAvatarListByAccount"
         _LOGGER.debug("URL đầy đủ: %s", url)
-
         resp = await hass.async_add_executor_job(
             lambda: session.post(url, json=payload)
         )
         _LOGGER.info("Phản hồi lấy danh sách ảnh đại diện: %s", resp.text)
         await show_result_notification(hass, "lấy danh sách ảnh đại diện", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_avatar_list: %s", e)
         await show_result_notification(hass, "lấy danh sách ảnh đại diện", None, error=e)
+        return {"error": str(e)}
 
 async def async_last_online_service(hass, call, zalo_login):
     """Dịch vụ xem thời gian hoạt động cuối của người dùng."""
@@ -319,9 +386,8 @@ async def async_last_online_service(hass, call, zalo_login):
         await hass.async_add_executor_job(zalo_login)
         payload = {
             "accountSelection": call.data["account_selection"],
-            "userId": call.data["user_id"]  # Sửa từ uid thành userId theo yêu cầu của API
+            "userId": call.data["user_id"] 
         }
-
         _LOGGER.debug("Gửi payload đến lastOnlineByAccount: %s", payload)
         url = f"{zalo_server}/api/lastOnlineByAccount"
         _LOGGER.debug("URL đầy đủ: %s", url)
@@ -331,6 +397,11 @@ async def async_last_online_service(hass, call, zalo_login):
         )
         _LOGGER.info("Phản hồi xem thời gian hoạt động cuối: %s", resp.text)
         await show_result_notification(hass, "xem thời gian hoạt động cuối", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_last_online: %s", e)
         await show_result_notification(hass, "xem thời gian hoạt động cuối", None, error=e)
+        return {"error": str(e)}

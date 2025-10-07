@@ -10,16 +10,13 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 _LOGGER = logging.getLogger(__name__)
 
-# Biến toàn cục để lưu trữ đường dẫn thư mục
 PUBLIC_DIR = None
-
 
 def find_free_port():
     """Tìm một cổng trống."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(('', 0))
         return s.getsockname()[1]
-
 
 def serve_file_temporarily(file_path, duration=60):
     """
@@ -120,7 +117,6 @@ def serve_file_temporarily(file_path, duration=60):
                 self.end_headers()
 
         def log_message(self, format, *args):
-            # Tắt log để không làm ảnh hưởng đến log của Home Assistant
             pass
 
     # Tạo máy chủ và chạy trong một thread riêng

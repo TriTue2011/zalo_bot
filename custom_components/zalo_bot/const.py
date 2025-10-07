@@ -143,7 +143,6 @@ SERVICE_REMOVE_PROXY_SCHEMA = vol.Schema({
     vol.Optional("proxy_url", default=""): cv.string,
 })
 
-# Thêm schema cho các service mới
 SERVICE_ACCEPT_FRIEND_REQUEST_SCHEMA = vol.Schema({
     vol.Required("user_id"): cv.string,
     vol.Required("account_selection"): cv.string,
@@ -208,7 +207,6 @@ SERVICE_SEND_VOICE_SCHEMA = vol.Schema({
     vol.Optional("type", default="0"): cv.string,
 })
 
-# Schema cho các API mới bổ sung
 SERVICE_GET_ALL_FRIENDS_SCHEMA = vol.Schema({
     vol.Required("account_selection"): cv.string,
 })
@@ -571,7 +569,7 @@ SERVICE_SEND_FRIEND_REQUEST_SCHEMA = vol.Schema({
     vol.Optional("message", default="Xin chào, hãy kết bạn với tôi!"): str,
 })
 SERVICE_CREATE_GROUP_SCHEMA = vol.Schema({
-    vol.Required("members"): str,  # Danh sách ngăn cách bởi dấu phẩy
+    vol.Required("members"): str,
     vol.Optional("name"): str,
     vol.Optional("avatar_path"): str,
     vol.Required("account_selection"): str,
@@ -582,12 +580,12 @@ SERVICE_GET_GROUP_INFO_SCHEMA = vol.Schema({
 })
 SERVICE_ADD_USER_TO_GROUP_SCHEMA = vol.Schema({
     vol.Required("group_id"): str,
-    vol.Required("member_id"): str,  # Danh sách ngăn cách bởi dấu phẩy
+    vol.Required("member_id"): str,
     vol.Required("account_selection"): str,
 })
 SERVICE_REMOVE_USER_FROM_GROUP_SCHEMA = vol.Schema({
     vol.Required("group_id"): str,
-    vol.Required("member_id"): str,  # Danh sách ngăn cách bởi dấu phẩy
+    vol.Required("member_id"): str,
     vol.Required("account_selection"): str,
 })
 SERVICE_SEND_IMAGE_TO_USER_SCHEMA = vol.Schema({
@@ -596,7 +594,7 @@ SERVICE_SEND_IMAGE_TO_USER_SCHEMA = vol.Schema({
     vol.Required("account_selection"): str,
 })
 SERVICE_SEND_IMAGES_TO_USER_SCHEMA = vol.Schema({
-    vol.Required("image_paths"): str,  # Danh sách URL ngăn cách bởi dấu phẩy
+    vol.Required("image_paths"): str,
     vol.Required("thread_id"): str,
     vol.Required("account_selection"): str,
 })
@@ -606,7 +604,7 @@ SERVICE_SEND_IMAGE_TO_GROUP_SCHEMA = vol.Schema({
     vol.Required("account_selection"): str,
 })
 SERVICE_SEND_IMAGES_TO_GROUP_SCHEMA = vol.Schema({
-    vol.Required("image_paths"): str,  # Danh sách URL ngăn cách bởi dấu phẩy
+    vol.Required("image_paths"): str,
     vol.Required("thread_id"): str,
     vol.Required("account_selection"): str,
 })
