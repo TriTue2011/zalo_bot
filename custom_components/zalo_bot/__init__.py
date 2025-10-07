@@ -111,7 +111,6 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-# Định nghĩa CONFIG_SCHEMA để chỉ ra rằng tích hợp này chỉ sử dụng config entry
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 session = requests.Session()
@@ -243,11 +242,12 @@ async def async_setup_entry(hass, entry):
     )
 
     async def get_logged_accounts(call):
-        await account_features.async_get_logged_accounts_service(hass, call, zalo_login)
+        return await account_features.async_get_logged_accounts_service(hass, call, zalo_login)
     hass.services.async_register(
         DOMAIN, "get_logged_accounts",
         get_logged_accounts,
         schema=SERVICE_GET_LOGGED_ACCOUNTS_SCHEMA,
+        supports_response=True
     )
 
     async def get_account_details(call):
