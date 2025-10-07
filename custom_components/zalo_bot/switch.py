@@ -4,10 +4,10 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_send
-from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONF_ENABLE_NOTIFICATIONS, DEFAULT_ENABLE_NOTIFICATIONS, DOMAIN, SIGNAL_NOTIFICATION_TOGGLE
+from . import get_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,13 +34,7 @@ class ZaloBotNotificationSwitch(SwitchEntity):
         self.hass = hass
         self.config_entry = config_entry
         self._attr_unique_id = f"{config_entry.entry_id}_notifications"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, "zalo_bot")},
-            name="Zalo Bot",
-            manufacturer="Smarthome Black",
-            model="Zalo Bot",
-            sw_version="2025.7.11",
-        )
+        self._attr_device_info = get_device_info()
         self._is_on = config_entry.data.get(CONF_ENABLE_NOTIFICATIONS, DEFAULT_ENABLE_NOTIFICATIONS)
 
     @property

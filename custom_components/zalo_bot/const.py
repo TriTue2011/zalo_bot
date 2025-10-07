@@ -14,7 +14,7 @@ DEFAULT_ENABLE_NOTIFICATIONS = True
 SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
 
 # Platforms
-PLATFORMS = [Platform.SWITCH]
+PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR]
 
 # Signal
 SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
@@ -26,6 +26,10 @@ SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
     vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
+    vol.Optional("quote"): vol.Schema({
+        vol.Required("content"): cv.string,
+        vol.Required("uidFrom"): cv.string,
+    }),
 })
 
 SERVICE_SEND_FILE_SCHEMA = vol.Schema({

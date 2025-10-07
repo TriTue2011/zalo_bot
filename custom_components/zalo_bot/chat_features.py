@@ -24,10 +24,16 @@ async def async_send_message_service(hass, call, zalo_login):
     try:
         await hass.async_add_executor_job(zalo_login)
         msg_type = call.data.get("type", "0")
+        
+        quote = call.data.get("quote")
+        if quote and isinstance(quote, dict):
+            import time
+            quote["cliMsgId"] = str(int(time.time() * 1000))
         payload = {
             "message": {
                 "msg": call.data["message"],
-                "ttl": call.data.get("ttl", 0)
+                "ttl": call.data.get("ttl", 0),
+                "quote": quote
             },
             "threadId": call.data["thread_id"],
             "accountSelection": call.data["account_selection"],

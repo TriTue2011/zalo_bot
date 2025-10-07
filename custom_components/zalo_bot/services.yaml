@@ -39,6 +39,24 @@ send_message:
         number:
           min: 0
           max: 86400000
+    quote:
+      description: "Trích dẫn trả lời tin nhắn. "
+      required: false
+      selector:
+        object:
+          features:
+            - content:
+                description: "Nội dung tin nhắn được trích dẫn"
+                required: true
+                example: "Tin nhắn được trích dẫn"
+                selector:
+                  text:
+            - uidFrom:
+                description: "ID người gửi tin nhắn được trích dẫn"
+                required: true
+                example: "u12345"
+                selector:
+                  text:
 send_file:
   description: Gửi một file bất kỳ qua URL hoặc từ đường dẫn cục bộ.
   fields:

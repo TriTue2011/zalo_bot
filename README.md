@@ -46,6 +46,16 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
 <img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/5.png" width="100%"></img>
 
+- Nếu sử dụng trích dẫn trả lời tin nhắn thì trường quote điền như sau:
+
+```yaml
+"content": "nội dung tin nhắn cần trích dẫn"
+"uidFrom": "ID của người gửi tin nhắn"
+```
+
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/6.png" width="100%"></img>
+
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/7.png" width="100%"></img>
 
 ### 5. Hướng Dẫn Tạo Hội Thoại Và Tự Động Hóa
 
