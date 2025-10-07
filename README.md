@@ -37,6 +37,10 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
 <img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/4.png" width="100%"></img>
 
+ - Nếu kết nối thành công và đăng nhập zalo bot thành công thì sẽ có cảm biến báo đã kết nối, các cảm biến sẽ cập nhập 1 phút 1 lần để cho biết trạng thái đăng nhập Zalo bot, có thể tạo tự động hóa để thông báo nếu như zalo bot bị đăng xuất hoặc cần đăng nhập lại, 
+
+<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/8.png" width="100%"></img>
+
 ### 4. Hướng Dẫn Sử Dụng
 - Có 2 dịch vụ chính để dùng tự động hóa là zalo_bot.send_image và zalo_bot.send_message
 - Vào trang quản lý ZALO BOT, Chọn Theo dõi tin nhắn và lấy Thread ID 
