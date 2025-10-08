@@ -24,16 +24,35 @@ async def async_send_message_service(hass, call, zalo_login):
     try:
         await hass.async_add_executor_job(zalo_login)
         msg_type = call.data.get("type", "0")
-        
-        quote = call.data.get("quote")
-        if quote and isinstance(quote, dict):
-            import time
-            quote["cliMsgId"] = str(int(time.time() * 1000))
+        quote_in = call.data.get("quote")
+        quote = None
+        if isinstance(quote_in, dict):
+            import time, json as _json
+            q = dict(quote_in)
+            content = q.get("content") or q.get("attach")
+            if isinstance(content, dict):
+                content = dict(content)
+                if "params" in content and not isinstance(content["params"], str):
+                    try:
+                        content["params"] = _json.dumps(content["params"])
+                    except Exception:
+                        content["params"] = str(content["params"])
+            msg_type_quote = q.get("msgType") or q.get("msg_type")
+            uid_from = q.get("uidFrom") or q.get("uid_from")
+            cli_msg_id = q.get("cliMsgId") or str(int(time.time() * 1000))
+            if content and uid_from:
+                quote = {
+                    "content": content,
+                    "uidFrom": str(uid_from),
+                    "cliMsgId": str(cli_msg_id)
+                }
+                if msg_type_quote:
+                    quote["msgType"] = msg_type_quote
         payload = {
             "message": {
                 "msg": call.data["message"],
                 "ttl": call.data.get("ttl", 0),
-                "quote": quote
+                "quote": quote,
             },
             "threadId": call.data["thread_id"],
             "accountSelection": call.data["account_selection"],

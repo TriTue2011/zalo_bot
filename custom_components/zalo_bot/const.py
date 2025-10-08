@@ -27,8 +27,10 @@ SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
     vol.Optional("type", default="0"): cv.string,
     vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
     vol.Optional("quote"): vol.Schema({
-        vol.Required("content"): cv.string,
+        vol.Required("content"): vol.Any(dict, cv.string),
+        vol.Optional("msgType"): cv.string,
         vol.Required("uidFrom"): cv.string,
+        vol.Required("cliMsgId"): cv.string,
     }),
 })
 

@@ -50,17 +50,6 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
 <img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/5.png" width="100%"></img>
 
-- Nếu sử dụng trích dẫn trả lời tin nhắn thì trường quote điền như sau:
-
-```yaml
-"content": "nội dung tin nhắn cần trích dẫn"
-"uidFrom": "ID của người gửi tin nhắn"
-```
-
-<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/6.png" width="100%"></img>
-
-<img title="Zalo Bot" src="https://raw.githubusercontent.com/smarthomeblack/zalo_bot/refs/heads/main/img/7.png" width="100%"></img>
-
 ### 5. Hướng Dẫn Tạo Hội Thoại Và Tự Động Hóa
 
 - [▶️ Xem video hướng dẫn trên YouTube](https://www.youtube.com/watch?v=xdl0oUv1LDg)
@@ -77,13 +66,13 @@ triggers:
       - GET
       - HEAD
     local_only: false
-    webhook_id: "xxxxxxxxx"
+    webhook_id: "-kckRb3xuIlUYoMHgbwIwPMKq"
     trigger: webhook
 conditions:
   - condition: template
     value_template: >
-      {{ '@Blackbot' in trigger.json.data.content and trigger.json.data.dName ==
-      'Black' }}
+      {{ '@Blackbot' in trigger.json.data.content and trigger.json.data.uidFrom
+      == '85276xxxxxxxxx203115' }}
 actions:
   - variables:
       user_message: "{{ trigger.json.data.content }}"
@@ -94,15 +83,23 @@ actions:
       conversation_id: "{{ conversation_id }}"
     response_variable: convo_response
     action: conversation.process
-  - data:
-      message: "Bot-Hass: {{ convo_response.response.speech.plain.speech }}"
-      thread_id: "xxxxxxxxxx"
-      account_selection: "+84xxxxxxxxx"
+  - action: zalo_bot.send_message
+    data:
       type: "1"
-    action: zalo_bot.send_message
+      thread_id: "{{ trigger.json.data.idTo }}"
+      account_selection: "+84123456789"
+      message: "Bot-Hass: {{ convo_response.response.speech.plain.speech }}"
+      quote: |
+        {% if trigger.json.data.msgType == 'webchat' %}
+          {{ {'content': trigger.json.data.content, 'uidFrom': trigger.json.data.uidFrom, 'cliMsgId': trigger.json.data.cliMsgId} }}
+        {% else %}
+          {{ {'content': trigger.json.data.content, 'msgType': trigger.json.data.msgType, 'uidFrom': trigger.json.data.uidFrom, 'cliMsgId': trigger.json.data.cliMsgId} }}
+        {% endif %}
 mode: single
 
 ```
+
+Thay 85276xxxxxxxxx203115 bằng uidFrom của bạn, thay @Blackbot thành tên bot của bạn, thay +84123456789 thành sdt của bot.
 
 ## Tính năng
 
