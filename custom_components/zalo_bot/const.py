@@ -14,7 +14,7 @@ DEFAULT_ENABLE_NOTIFICATIONS = True
 SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
 
 # Platforms
-PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR]
+PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR, Platform.BUTTON]
 
 # Signal
 SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
@@ -634,3 +634,4 @@ SERVICE_ADD_PROXY_SCHEMA = vol.Schema({
 SERVICE_REMOVE_PROXY_SCHEMA = vol.Schema({
     vol.Required("proxy_url"): str,
 })
+SERVICE_GET_LOGIN_QR_SCHEMA = vol.Schema({})

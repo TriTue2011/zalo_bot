@@ -107,7 +107,7 @@ from .const import (
     SERVICE_UPDATE_AUTO_DELETE_CHAT_SCHEMA,
     SERVICE_GET_HIDDEN_CONVERSATIONS_SCHEMA,
     SERVICE_SET_HIDDEN_CONVERSATIONS_SCHEMA,
-
+    SERVICE_GET_LOGIN_QR_SCHEMA,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -125,7 +125,7 @@ def get_device_info():
         name="Zalo Bot",
         manufacturer="Smarthome Black",
         model="Zalo Bot",
-        sw_version="2025.10.8",
+        sw_version="2025.10.11",
     )
 
 async def async_setup(hass, config):
@@ -196,7 +196,11 @@ async def async_setup_entry(hass, entry):
     # Cập nhật biến toàn cục trong quickmsg_features.py
     from . import quickmsg_features
     quickmsg_features.set_globals(session, zalo_server)
-
+    
+    # Cập nhật biến toàn cục trong login_qr_service.py
+    from . import login_qr_service
+    login_qr_service.set_globals(session, zalo_server)
+    
     # Khởi tạo các platform
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -1073,6 +1077,15 @@ async def async_setup_entry(hass, entry):
         DOMAIN, "get_received_friend_requests",
         get_received_friend_requests,
         schema=SERVICE_GET_RECEIVED_FRIEND_REQUESTS_SCHEMA,
+        supports_response=True
+    )
+    
+    async def get_login_qr(call):
+        return await login_qr_service.async_get_login_qr(hass, call, zalo_login)
+    hass.services.async_register(
+        DOMAIN, "get_login_qr",
+        get_login_qr,
+        schema=SERVICE_GET_LOGIN_QR_SCHEMA,
         supports_response=True
     )
 

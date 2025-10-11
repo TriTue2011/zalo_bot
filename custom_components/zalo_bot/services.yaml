@@ -2067,3 +2067,7 @@ send_typing_event:
       required: true
       selector:
         text:
+get_login_qr:
+  name: Lấy mã QR đăng nhập Zalo
+  description: Lấy mã QR đăng nhập Zalo từ server và hiển thị lên thông báo.
+  fields: {}

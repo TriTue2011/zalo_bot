@@ -5,7 +5,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
 from .const import CONF_ENABLE_NOTIFICATIONS, DEFAULT_ENABLE_NOTIFICATIONS, DOMAIN, SIGNAL_NOTIFICATION_TOGGLE
 from . import get_device_info
 
