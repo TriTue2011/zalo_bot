@@ -16,9 +16,6 @@ SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
 # Platforms
 PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR, Platform.BUTTON]
 
-# Signal
-SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
-
 # Schema cho các service
 SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("message"): cv.string,
@@ -556,82 +553,4 @@ SERVICE_SEND_TYPING_EVENT_SCHEMA = vol.Schema({
     vol.Required("account_selection"): cv.string,
 })
 
-# Các schema mới cho các dịch vụ bổ sung
-SERVICE_GET_LOGGED_ACCOUNTS_SCHEMA = vol.Schema({})
-SERVICE_GET_ACCOUNT_DETAILS_SCHEMA = vol.Schema({
-    vol.Required("own_id"): str,
-})
-SERVICE_FIND_USER_SCHEMA = vol.Schema({
-    vol.Required("phone"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_GET_USER_INFO_SCHEMA = vol.Schema({
-    vol.Required("user_id"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_SEND_FRIEND_REQUEST_SCHEMA = vol.Schema({
-    vol.Required("user_id"): str,
-    vol.Required("account_selection"): str,
-    vol.Optional("message", default="Xin chào, hãy kết bạn với tôi!"): str,
-})
-SERVICE_CREATE_GROUP_SCHEMA = vol.Schema({
-    vol.Required("members"): str,
-    vol.Optional("name"): str,
-    vol.Optional("avatar_path"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_GET_GROUP_INFO_SCHEMA = vol.Schema({
-    vol.Optional("group_id", default=""): str,
-    vol.Optional("account_selection", default=""): str,
-})
-SERVICE_ADD_USER_TO_GROUP_SCHEMA = vol.Schema({
-    vol.Required("group_id"): str,
-    vol.Required("member_id"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_REMOVE_USER_FROM_GROUP_SCHEMA = vol.Schema({
-    vol.Required("group_id"): str,
-    vol.Required("member_id"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_SEND_IMAGE_TO_USER_SCHEMA = vol.Schema({
-    vol.Required("image_path"): str,
-    vol.Required("thread_id"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_SEND_IMAGES_TO_USER_SCHEMA = vol.Schema({
-    vol.Required("image_paths"): str,
-    vol.Required("thread_id"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_SEND_IMAGE_TO_GROUP_SCHEMA = vol.Schema({
-    vol.Required("image_path"): str,
-    vol.Required("thread_id"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_SEND_IMAGES_TO_GROUP_SCHEMA = vol.Schema({
-    vol.Required("image_paths"): str,
-    vol.Required("thread_id"): str,
-    vol.Required("account_selection"): str,
-})
-SERVICE_GET_ACCOUNT_WEBHOOKS_SCHEMA = vol.Schema({})
-SERVICE_GET_ACCOUNT_WEBHOOK_SCHEMA = vol.Schema({
-    vol.Required("own_id"): str,
-})
-SERVICE_SET_ACCOUNT_WEBHOOK_SCHEMA = vol.Schema({
-    vol.Required("own_id"): str,
-    vol.Optional("message_webhook_url"): str,
-    vol.Optional("group_event_webhook_url"): str,
-    vol.Optional("reaction_webhook_url"): str,
-})
-SERVICE_DELETE_ACCOUNT_WEBHOOK_SCHEMA = vol.Schema({
-    vol.Required("own_id"): str,
-})
-SERVICE_GET_PROXIES_SCHEMA = vol.Schema({})
-SERVICE_ADD_PROXY_SCHEMA = vol.Schema({
-    vol.Required("proxy_url"): str,
-})
-SERVICE_REMOVE_PROXY_SCHEMA = vol.Schema({
-    vol.Required("proxy_url"): str,
-})
 SERVICE_GET_LOGIN_QR_SCHEMA = vol.Schema({})

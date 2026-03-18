@@ -370,7 +370,7 @@ async def async_set_hidden_conversations_service(hass, call, zalo_login):
     _LOGGER.debug("Dịch vụ async_set_hidden_conversations được gọi với: %s", call.data)
     try:
         await hass.async_add_executor_job(zalo_login)
-        is_hide_str = str(call.data["is_hide"]).lower()
+        is_hide_str = str(call.data["hidden"]).lower()
         is_hide = is_hide_str == "true" or is_hide_str == "1" or is_hide_str == "yes"
         payload = {
             "accountSelection": call.data["account_selection"],
