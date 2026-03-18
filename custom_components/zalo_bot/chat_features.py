@@ -3,7 +3,6 @@ import logging
 import os
 import asyncio
 from .file_handling import serve_file_temporarily, copy_to_public, get_video_duration_ms
-from .file_handling import serve_file_temporarily, get_video_duration_ms, copy_to_public
 from .notification import show_result_notification
 
 _LOGGER = logging.getLogger(__name__)
@@ -355,35 +354,29 @@ async def async_send_voice_service(hass, call, zalo_login):
         await hass.async_add_executor_job(zalo_login)
         voice_path = call.data["voice_path"]
         voice_url = voice_path
-        local_server = None
         if not voice_path.startswith(("http://", "https://")):
             if os.path.isfile(voice_path):
-                voice_url, local_server = await hass.async_add_executor_job(
+                voice_url = await hass.async_add_executor_job(
                     serve_file_temporarily, voice_path
                 )
             else:
                 raise Exception(f"Không tìm thấy file âm thanh: {voice_path}")
-        try:
-            payload = {
-                "threadId": call.data["thread_id"],
-                "accountSelection": call.data["account_selection"],
-                "options": {
-                    "voiceUrl": voice_url
-                }
+        payload = {
+            "threadId": call.data["thread_id"],
+            "accountSelection": call.data["account_selection"],
+            "options": {
+                "voiceUrl": voice_url
             }
-            resp = await hass.async_add_executor_job(
-                lambda: session.post(f"{zalo_server}/api/sendVoiceByAccount", json=payload)
-            )
-            _LOGGER.info("Phản hồi gửi tin nhắn thoại: %s", resp.text)
-            await show_result_notification(hass, "gửi tin nhắn thoại", resp)
-            try:
-              return resp.json()
-            except:
-              return {"text": resp.text}
-        finally:
-            if local_server:
-                local_server.shutdown()
-                local_server.server_close()
+        }
+        resp = await hass.async_add_executor_job(
+            lambda: session.post(f"{zalo_server}/api/sendVoiceByAccount", json=payload)
+        )
+        _LOGGER.info("Phản hồi gửi tin nhắn thoại: %s", resp.text)
+        await show_result_notification(hass, "gửi tin nhắn thoại", resp)
+        try:
+            return resp.json()
+        except:
+            return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_voice: %s", e)
         await show_result_notification(hass, "gửi tin nhắn thoại", None, error=e)
