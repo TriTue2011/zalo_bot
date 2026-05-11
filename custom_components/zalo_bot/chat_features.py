@@ -4,7 +4,6 @@ import os
 import asyncio
 from .const import DOMAIN
 from .file_handling import serve_file_temporarily, copy_to_public, get_video_duration_ms
-from .file_handling import serve_file_temporarily, get_video_duration_ms, copy_to_public
 from .notification import show_result_notification
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,6 +34,15 @@ ZALO_COLORS = {
     "orange": "c_f27806",
     "yellow": "c_f7b503",
     "green": "c_15a85f",
+}
+
+HEADING_STYLES = {
+    1: "f_20,b",   # H1: rất lớn + đậm
+    2: "f_18,b",   # H2: lớn + đậm
+    3: "b",        # H3: đậm (bình thường)
+    4: "f_13",     # H4: nhỏ
+    5: "f_13",     # H5: nhỏ
+    6: "f_13",     # H6: nhỏ
 }
 
 
@@ -77,16 +85,6 @@ def markdown_to_zalo_styles(text, style_override=None):
         if ch == '*' or ord(ch) in (0x2217, 0xFE61, 0xFF0A, 0x204E, 0x2731, 0x2732):
             ctx = text[max(0, i - 10):i + 15]
             _LOGGER.debug("[markdown_to_zalo_styles] ASTERISK at pos=%d U+%04X ctx=%s", i, ord(ch), repr(ctx))
-
-    # Heading level -> Zalo style token
-    HEADING_STYLES = {
-        1: "f_20,b",   # H1: rất lớn + đậm
-        2: "f_18,b",   # H2: lớn + đậm
-        3: "b",        # H3: đậm (bình thường)
-        4: "f_13",     # H4: nhỏ
-        5: "f_13",     # H5: nhỏ
-        6: "f_13",     # H6: nhỏ
-    }
 
     # Phase 1: stack-based pair matching
     # Stack entries: (marker_str, open_pos_in_original, token)

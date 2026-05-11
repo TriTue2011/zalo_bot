@@ -80,14 +80,19 @@ class ZaloBotMarkdownSwitch(SwitchEntity):
 
     @property
     def is_on(self) -> bool:
-        return self.hass.data[DOMAIN].get(CONF_MARKDOWN_ENABLED, DEFAULT_MARKDOWN_ENABLED)
+        return self.config_entry.data.get(CONF_MARKDOWN_ENABLED, DEFAULT_MARKDOWN_ENABLED)
 
     async def async_turn_on(self, *_) -> None:
-        self.hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = True
+        await self._update_config(True)
         self.async_write_ha_state()
-        _LOGGER.info("Markdown formatting enabled")
 
     async def async_turn_off(self, *_) -> None:
-        self.hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = False
+        await self._update_config(False)
         self.async_write_ha_state()
-        _LOGGER.info("Markdown formatting disabled")
+
+    async def _update_config(self, enabled: bool) -> None:
+        data = {**self.config_entry.data}
+        data[CONF_MARKDOWN_ENABLED] = enabled
+        self.hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = enabled
+        self.hass.config_entries.async_update_entry(self.config_entry, data=data)
+        _LOGGER.info("Markdown formatting %s", "enabled" if enabled else "disabled")

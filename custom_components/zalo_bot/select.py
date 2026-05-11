@@ -37,9 +37,12 @@ class ZaloBotMarkdownColorSelect(SelectEntity):
 
     @property
     def current_option(self) -> str:
-        return self.hass.data[DOMAIN].get(CONF_MARKDOWN_COLOR, DEFAULT_MARKDOWN_COLOR)
+        return self.config_entry.data.get(CONF_MARKDOWN_COLOR, DEFAULT_MARKDOWN_COLOR)
 
     async def async_select_option(self, option: str) -> None:
         self.hass.data[DOMAIN][CONF_MARKDOWN_COLOR] = option
+        data = {**self.config_entry.data}
+        data[CONF_MARKDOWN_COLOR] = option
+        self.hass.config_entries.async_update_entry(self.config_entry, data=data)
         self.async_write_ha_state()
         _LOGGER.info("Markdown color set to: %s", option)
