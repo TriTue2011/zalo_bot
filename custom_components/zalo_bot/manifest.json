@@ -12,5 +12,6 @@
   "requirements": [
     "requests"
   ],
+  "single_config_entry": true,
   "version": "2026.5.10"
 }

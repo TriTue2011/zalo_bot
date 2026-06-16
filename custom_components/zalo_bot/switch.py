@@ -5,6 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
 from .const import (
     CONF_ENABLE_NOTIFICATIONS,
     CONF_MARKDOWN_ENABLED,
@@ -65,7 +66,7 @@ class ZaloBotNotificationSwitch(SwitchEntity):
         async_dispatcher_send(self.hass, SIGNAL_NOTIFICATION_TOGGLE, self._is_on)
 
 
-class ZaloBotMarkdownSwitch(SwitchEntity):
+class ZaloBotMarkdownSwitch(SwitchEntity, RestoreEntity):
     """Switch bật/tắt định dạng markdown (**bold**, *italic*...)."""
 
     _attr_has_entity_name = True
@@ -77,22 +78,28 @@ class ZaloBotMarkdownSwitch(SwitchEntity):
         self.config_entry = config_entry
         self._attr_unique_id = f"{config_entry.entry_id}_markdown"
         self._attr_device_info = get_device_info()
+        self._is_on = DEFAULT_MARKDOWN_ENABLED
+
+    async def async_added_to_hass(self) -> None:
+        """Khôi phục trạng thái markdown đã lưu sau khi restart."""
+        await super().async_added_to_hass()
+        last_state = await self.async_get_last_state()
+        if last_state is not None:
+            self._is_on = last_state.state == "on"
+        self.hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = self._is_on
 
     @property
     def is_on(self) -> bool:
-        return self.config_entry.data.get(CONF_MARKDOWN_ENABLED, DEFAULT_MARKDOWN_ENABLED)
+        return self._is_on
 
     async def async_turn_on(self, *_) -> None:
-        await self._update_config(True)
+        self._is_on = True
+        self.hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = True
         self.async_write_ha_state()
+        _LOGGER.info("Markdown formatting enabled")
 
     async def async_turn_off(self, *_) -> None:
-        await self._update_config(False)
+        self._is_on = False
+        self.hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = False
         self.async_write_ha_state()
-
-    async def _update_config(self, enabled: bool) -> None:
-        data = {**self.config_entry.data}
-        data[CONF_MARKDOWN_ENABLED] = enabled
-        self.hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = enabled
-        self.hass.config_entries.async_update_entry(self.config_entry, data=data)
-        _LOGGER.info("Markdown formatting %s", "enabled" if enabled else "disabled")
+        _LOGGER.info("Markdown formatting disabled")

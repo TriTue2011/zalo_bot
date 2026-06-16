@@ -144,13 +144,10 @@ async def async_setup_entry(hass, entry):
     if CONF_ENABLE_NOTIFICATIONS not in config:
         config[CONF_ENABLE_NOTIFICATIONS] = DEFAULT_ENABLE_NOTIFICATIONS
 
-    # Khởi tạo markdown config — ưu tiên giá trị đã persist từ config_entry
-    hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = config.get(
-        CONF_MARKDOWN_ENABLED, DEFAULT_MARKDOWN_ENABLED
-    )
-    hass.data[DOMAIN][CONF_MARKDOWN_COLOR] = config.get(
-        CONF_MARKDOWN_COLOR, DEFAULT_MARKDOWN_COLOR
-    )
+    # Seed default markdown vào hass.data; giá trị thật do RestoreEntity
+    # (switch Markdown / select Markdown Color) khôi phục trong async_added_to_hass
+    hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = DEFAULT_MARKDOWN_ENABLED
+    hass.data[DOMAIN][CONF_MARKDOWN_COLOR] = DEFAULT_MARKDOWN_COLOR
 
     # Khởi tạo session và các biến toàn cục
     global session, zalo_server, WWW_DIR, PUBLIC_DIR
