@@ -820,6 +820,10 @@ async def async_send_images_to_user_service(hass, call, zalo_login):
                             if public_url.startswith("/local/"):
                                 fixed_url = f"{zalo_server}{public_url.replace('/local', '')}"
                                 processed_paths.append(fixed_url)
+                            else:
+                                # Xem ghi chú cùng lỗi này trong
+                                # async_send_images_to_group_service.
+                                processed_paths.append(public_url)
                         else:
                             _LOGGER.warning(f"Không thể copy ảnh: {img}, bỏ qua")
                     else:
@@ -882,6 +886,16 @@ async def async_send_images_to_group_service(hass, call, zalo_login):
                             if public_url.startswith("/local/"):
                                 fixed_url = f"{zalo_server}{public_url.replace('/local', '')}"
                                 processed_paths.append(fixed_url)
+                            else:
+                                # copy_to_public trả về URL đầy đủ (http://...) khi
+                                # Zalo server là localhost. Thiếu nhánh này thì ảnh
+                                # không bao giờ được thêm vào processed_paths: mọi
+                                # ảnh bị bỏ âm thầm (không log cảnh báo, vì else bên
+                                # dưới chỉ bắt trường hợp public_url rỗng) và dịch vụ
+                                # kết thúc bằng "Không có ảnh nào được xử lý thành
+                                # công". Gửi MỘT ảnh không bị lỗi này vì
+                                # async_send_image_service dùng public_url trực tiếp.
+                                processed_paths.append(public_url)
                         else:
                             _LOGGER.warning(f"Không thể copy ảnh: {img}, bỏ qua")
                     else:
