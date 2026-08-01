@@ -226,6 +226,38 @@ async def async_get_all_groups_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách tất cả các nhóm", None, error=e)
         return {"error": str(e)}
 
+async def async_get_group_chat_history_service(hass, call, zalo_login):
+    """Dịch vụ lấy lịch sử tin nhắn nhóm."""
+    _LOGGER.debug("Dịch vụ async_get_group_chat_history được gọi với: %s", call.data)
+    try:
+        await hass.async_add_executor_job(zalo_login)
+        payload = {
+            "groupId": call.data["group_id"],
+            "accountSelection": call.data["account_selection"]
+        }
+        # Thêm count nếu được cung cấp
+        if call.data.get("count"):
+            payload["count"] = call.data["count"]
+        resp = await hass.async_add_executor_job(
+            lambda: session.post(f"{zalo_server}/api/getGroupChatHistoryByAccount", json=payload)
+        )
+        _LOGGER.info("Phản hồi lấy lịch sử tin nhắn nhóm: %s", resp.text)
+        await show_result_notification(hass, "lấy lịch sử tin nhắn nhóm", resp)
+        try:
+            result = resp.json()
+            # Fallback: nếu backend vẫn trả dName=null, dùng uidFrom làm tên hiển thị
+            if result.get("success") and result.get("data", {}).get("groupMsgs"):
+                for msg in result["data"]["groupMsgs"]:
+                    if msg.get("data", {}).get("dName") is None:
+                        msg["data"]["dName"] = msg.get("data", {}).get("uidFrom") or "Unknown"
+            return result
+        except:
+            return {"text": resp.text}
+    except Exception as e:
+        _LOGGER.error("Lỗi trong async_get_group_chat_history: %s", e)
+        await show_result_notification(hass, "lấy lịch sử tin nhắn nhóm", None, error=e)
+        return {"error": str(e)}
+
 async def async_add_group_deputy_service(hass, call, zalo_login):
     """Dịch vụ thêm phó nhóm."""
     _LOGGER.debug("Dịch vụ async_add_group_deputy được gọi với: %s", call.data)

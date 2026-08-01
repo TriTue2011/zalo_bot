@@ -19,9 +19,9 @@ async def show_result_notification(hass, service_name, resp, error=None):
         from .const import CONF_ENABLE_NOTIFICATIONS, DOMAIN
         
         notifications_enabled = True
-        for entry_id in hass.data.get(DOMAIN, {}):
-            if CONF_ENABLE_NOTIFICATIONS in hass.data[DOMAIN][entry_id]:
-                notifications_enabled = hass.data[DOMAIN][entry_id][CONF_ENABLE_NOTIFICATIONS]
+        for entry_id, entry_data in hass.data.get(DOMAIN, {}).items():
+            if isinstance(entry_data, dict) and CONF_ENABLE_NOTIFICATIONS in entry_data:
+                notifications_enabled = entry_data[CONF_ENABLE_NOTIFICATIONS]
                 break
 
         # Nếu thông báo bị tắt, chỉ ghi log và không hiển thị thông báo

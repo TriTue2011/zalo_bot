@@ -836,6 +836,31 @@ get_all_groups:
       selector:
         text:
 
+get_group_chat_history:
+  description: Lấy lịch sử tin nhắn của một nhóm
+  fields:
+    group_id:
+      description: ID của nhóm cần lấy lịch sử
+      example: "group123456"
+      required: true
+      selector:
+        text:
+    count:
+      description: Số lượng tin nhắn muốn lấy (mặc định 50, tối đa 200)
+      example: 50
+      required: false
+      default: 50
+      selector:
+        number:
+          min: 1
+          max: 200
+    account_selection:
+      description: Số điện thoại hoặc ID tài khoản
+      example: "+84123456789"
+      required: true
+      selector:
+        text:
+
 add_group_deputy:
   description: Thêm phó nhóm
   fields:

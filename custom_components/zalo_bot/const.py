@@ -13,8 +13,14 @@ CONF_ENABLE_NOTIFICATIONS = "enable_notifications"
 DEFAULT_ENABLE_NOTIFICATIONS = True
 SIGNAL_NOTIFICATION_TOGGLE = f"{DOMAIN}_notification_toggle"
 
+# Markdown config keys
+CONF_MARKDOWN_ENABLED = "markdown_enabled"
+CONF_MARKDOWN_COLOR = "markdown_color"
+DEFAULT_MARKDOWN_ENABLED = True
+DEFAULT_MARKDOWN_COLOR = "none"
+
 # Platforms
-PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR, Platform.BUTTON]
+PLATFORMS = [Platform.SWITCH, Platform.BINARY_SENSOR, Platform.BUTTON, Platform.SELECT]
 
 # Schema cho các service
 SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
@@ -244,6 +250,12 @@ SERVICE_REMOVE_FRIEND_ALIAS_SCHEMA = vol.Schema({
 })
 
 SERVICE_GET_ALL_GROUPS_SCHEMA = vol.Schema({
+    vol.Required("account_selection"): cv.string,
+})
+
+SERVICE_GET_GROUP_CHAT_HISTORY_SCHEMA = vol.Schema({
+    vol.Required("group_id"): cv.string,
+    vol.Optional("count", default=50): vol.All(int, vol.Range(min=1, max=200)),
     vol.Required("account_selection"): cv.string,
 })
 
