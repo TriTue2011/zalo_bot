@@ -178,28 +178,6 @@ async def async_get_all_friends_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách bạn bè", None, error=e)
         return {"error": str(e)}
 
-async def async_get_received_friend_requests_service(hass, call, zalo_login):
-    """Dịch vụ lấy danh sách lời mời kết bạn đã nhận trên Zalo."""
-    _LOGGER.debug("Dịch vụ async_get_received_friend_requests được gọi với: %s", call.data)
-    try:
-        await hass.async_add_executor_job(zalo_login)
-        payload = {
-            "accountSelection": call.data["account_selection"]
-        }
-        resp = await hass.async_add_executor_job(
-            lambda: session.post(f"{zalo_server}/api/getReceivedFriendRequestsByAccount", json=payload)
-        )
-        _LOGGER.info("Phản hồi lấy lời mời kết bạn đã nhận: %s", resp.text)
-        await show_result_notification(hass, "lấy lời mời kết bạn đã nhận", resp)
-        try:
-            return resp.json()
-        except:
-            return {"text": resp.text}
-    except Exception as e:
-        _LOGGER.error("Lỗi trong async_get_received_friend_requests: %s", e)
-        await show_result_notification(hass, "lấy lời mời kết bạn đã nhận", None, error=e)
-        return {"error": str(e)}
-
 async def async_get_sent_friend_requests_service(hass, call, zalo_login):
     """Dịch vụ lấy danh sách lời mời kết bạn đã gửi trên Zalo."""
     _LOGGER.debug("Dịch vụ async_get_sent_friend_requests được gọi với: %s", call.data)

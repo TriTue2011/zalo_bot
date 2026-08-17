@@ -547,6 +547,15 @@ undo_message:
       required: true
       selector:
         text:
+    cli_msg_id:
+      description: >-
+        cliMsgId của chính tin nhắn đó (Zalo cần cả hai mã mới thu hồi được).
+        Sự kiện tin nhắn gửi về automation có sẵn trường này. Bỏ trống thì dùng
+        lại msg_id, có trường hợp Zalo từ chối.
+      example: "1712345678901"
+      required: false
+      selector:
+        text:
     thread_id:
       description: ThreadId của cuộc trò chuyện
       example: "5841349563795164131"
@@ -728,16 +737,6 @@ send_voice:
 
 get_all_friends:
   description: Lấy danh sách tất cả bạn bè
-  fields:
-    account_selection:
-      description: Số điện thoại hoặc ID tài khoản
-      example: "+84123456789"
-      required: true
-      selector:
-        text:
-
-get_received_friend_requests:
-  description: Lấy danh sách lời mời kết bạn đã nhận
   fields:
     account_selection:
       description: Số điện thoại hoặc ID tài khoản

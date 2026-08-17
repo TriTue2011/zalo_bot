@@ -55,8 +55,8 @@ async def async_get_quick_message_service(hass, call, zalo_login):
         payload = {
             "accountSelection": call.data["account_selection"]
         }
-        _LOGGER.debug("Gửi payload đến getQuickMessageByAccount: %s", payload)
-        url = f"{zalo_server}/api/getQuickMessageByAccount"
+        _LOGGER.debug("Gửi payload đến getQuickMessageListByAccount: %s", payload)
+        url = f"{zalo_server}/api/getQuickMessageListByAccount"
         _LOGGER.debug("URL đầy đủ: %s", url)
 
         resp = await hass.async_add_executor_job(

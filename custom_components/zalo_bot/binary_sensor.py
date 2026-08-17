@@ -34,6 +34,10 @@ async def async_setup_entry(
     password = config.get(CONF_PASSWORD, "admin")
     coordinator = ZaloLoginCoordinator(hass, zalo_server, username, password)
     await coordinator.async_config_entry_first_refresh()
+    # Đóng phiên aiohttp khi gỡ tích hợp. Mỗi lần lưu cấu hình là entry được nạp
+    # lại, tức là tạo thêm một phiên mới; không đăng ký đóng thì phiên cũ nằm lại
+    # và Home Assistant báo "Unclosed client session" dồn dần.
+    entry.async_on_unload(coordinator.async_close)
     async_add_entities([
         ZaloLoginBinarySensor(coordinator, entry),
         ZaloServerBinarySensor(coordinator, entry)
@@ -107,9 +111,11 @@ class ZaloLoginCoordinator(DataUpdateCoordinator):
             self.login_success = False
         return {"logged_in": False, "total": 0, "accounts": []}
     async def async_close(self) -> None:
-        """Đóng session."""
+        """Đóng phiên aiohttp và dừng vòng cập nhật."""
         await self.session.close()
-        await super().async_close()
+        # Lớp cha là DataUpdateCoordinator, không có async_close — tên đúng là
+        # async_shutdown. Gọi sai tên thì chính hàm này ném AttributeError.
+        await self.async_shutdown()
 
 
 class ZaloLoginBinarySensor(CoordinatorEntity, BinarySensorEntity):

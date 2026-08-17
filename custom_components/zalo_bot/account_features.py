@@ -171,7 +171,10 @@ async def async_get_proxies_service(hass, call, zalo_login):
     try:
         await hass.async_add_executor_job(zalo_login)
         resp = await hass.async_add_executor_job(
-            lambda: session.get(f"{zalo_server}/api/proxies")
+            # Máy chủ để proxy ở /proxies (KHÔNG có tiền tố /api). Thiếu header
+            # Accept thì nó trả về trang HTML quản lý chứ không trả dữ liệu.
+            lambda: session.get(f"{zalo_server}/proxies",
+                                headers={"Accept": "application/json"})
         )
         _LOGGER.info("Phản hồi lấy danh sách proxy: %s", resp.text)
         await show_result_notification(hass, "lấy danh sách proxy", resp)
@@ -194,7 +197,7 @@ async def async_add_proxy_service(hass, call, zalo_login):
             "proxyUrl": call.data["proxy_url"]
         }
         resp = await hass.async_add_executor_job(
-            lambda: session.post(f"{zalo_server}/api/proxies", json=payload)
+            lambda: session.post(f"{zalo_server}/proxies", json=payload)
         )
         _LOGGER.info("Phản hồi thêm proxy: %s", resp.text)
         await show_result_notification(hass, "thêm proxy", resp)
@@ -217,7 +220,7 @@ async def async_remove_proxy_service(hass, call, zalo_login):
             "proxyUrl": call.data["proxy_url"]
         }
         resp = await hass.async_add_executor_job(
-            lambda: session.delete(f"{zalo_server}/api/proxies", json=payload)
+            lambda: session.delete(f"{zalo_server}/proxies", json=payload)
         )
         _LOGGER.info("Phản hồi xóa proxy: %s", resp.text)
         await show_result_notification(hass, "xóa proxy", resp)

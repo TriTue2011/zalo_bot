@@ -1,4 +1,5 @@
 """Zalo Bot integration."""
+import json
 import logging
 import os
 import requests
@@ -83,7 +84,6 @@ from .const import (
     SERVICE_CHANGE_GROUP_AVATAR_SCHEMA,
     SERVICE_SEND_VOICE_SCHEMA,
     SERVICE_GET_ALL_FRIENDS_SCHEMA,
-    SERVICE_GET_RECEIVED_FRIEND_REQUESTS_SCHEMA,
     SERVICE_GET_SENT_FRIEND_REQUESTS_SCHEMA,
     SERVICE_UNDO_FRIEND_REQUEST_SCHEMA,
     SERVICE_REMOVE_FRIEND_SCHEMA,
@@ -124,13 +124,27 @@ zalo_server = None
 WWW_DIR = None
 PUBLIC_DIR = None
 
+def _phien_ban() -> str:
+    """Số phiên bản lấy thẳng từ manifest.json.
+
+    Trước đây ghi cứng "2026.5.10" nên mỗi lần nâng manifest là thiết bị trong
+    Home Assistant vẫn hiện số cũ — người dùng tưởng bản cập nhật chưa vào.
+    """
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "manifest.json"),
+                  encoding="utf-8") as f:
+            return json.load(f).get("version", "")
+    except Exception:  # manifest luôn có, nhưng thiếu nó thì đừng chặn khởi động
+        return ""
+
+
 def get_device_info():
     return DeviceInfo(
         identifiers={(DOMAIN, "zalo_bot")},
         name="Zalo Bot",
         manufacturer="Smarthome Black",
         model="Zalo Bot",
-        sw_version="2026.5.10",
+        sw_version=_phien_ban(),
     )
 
 async def async_setup(hass, config):
@@ -1096,15 +1110,11 @@ async def async_setup_entry(hass, entry):
         supports_response=True
     )
 
-    async def get_received_friend_requests(call):
-        return await user_features.async_get_received_friend_requests_service(hass, call, zalo_login)
-    hass.services.async_register(
-        DOMAIN, "get_received_friend_requests",
-        get_received_friend_requests,
-        schema=SERVICE_GET_RECEIVED_FRIEND_REQUESTS_SCHEMA,
-        supports_response=True
-    )
-    
+    # Đã gỡ dịch vụ get_received_friend_requests: máy chủ không có đường
+    # getReceivedFriendRequestsByAccount, và thư viện zca-js cũng không có API
+    # nào đọc được lời mời kết bạn ĐÃ NHẬN (chỉ có getSentFriendRequest). Gọi
+    # dịch vụ này luôn trả 404, để lại chỉ làm người dùng tưởng máy chủ hỏng.
+
     async def get_login_qr(call):
         return await login_qr_service.async_get_login_qr(hass, call, zalo_login)
     hass.services.async_register(

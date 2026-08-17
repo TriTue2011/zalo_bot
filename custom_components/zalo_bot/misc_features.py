@@ -19,14 +19,19 @@ async def async_undo_message_service(hass, call, zalo_login):
     try:
         await hass.async_add_executor_job(zalo_login)
         msg_type = call.data.get("type", "0")
+        # Máy chủ nhận {payload: {msgId, cliMsgId}, threadId, type} — Zalo cần cả
+        # hai mã tin nhắn để thu hồi. Không khai cli_msg_id thì dùng lại msg_id.
         payload = {
-            "msgId": call.data["msg_id"],
+            "payload": {
+                "msgId": call.data["msg_id"],
+                "cliMsgId": call.data.get("cli_msg_id") or call.data["msg_id"],
+            },
             "threadId": call.data["thread_id"],
             "accountSelection": call.data["account_selection"],
             "type": 1 if msg_type == "1" else 0
         }
         resp = await hass.async_add_executor_job(
-            lambda: session.post(f"{zalo_server}/api/undoMessageByAccount", json=payload)
+            lambda: session.post(f"{zalo_server}/api/undoByAccount", json=payload)
         )
         _LOGGER.info("Phản hồi hủy tin nhắn: %s", resp.text)
         await show_result_notification(hass, "hủy tin nhắn", resp)

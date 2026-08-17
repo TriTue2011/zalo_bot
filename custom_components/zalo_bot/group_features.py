@@ -463,7 +463,7 @@ async def async_create_note_group_service(hass, call, zalo_login):
             }
         }
         resp = await hass.async_add_executor_job(
-            lambda: session.post(f"{zalo_server}/api/createNoteGroupByAccount", json=payload)
+            lambda: session.post(f"{zalo_server}/api/createNoteByAccount", json=payload)
         )
         _LOGGER.info("Phản hồi tạo ghi chú nhóm: %s", resp.text)
         await show_result_notification(hass, "tạo ghi chú nhóm", resp)
@@ -490,7 +490,7 @@ async def async_edit_note_group_service(hass, call, zalo_login):
             }
         }
         resp = await hass.async_add_executor_job(
-            lambda: session.post(f"{zalo_server}/api/editNoteGroupByAccount", json=payload)
+            lambda: session.post(f"{zalo_server}/api/editNoteByAccount", json=payload)
         )
         _LOGGER.info("Phản hồi sửa ghi chú nhóm: %s", resp.text)
         await show_result_notification(hass, "sửa ghi chú nhóm", resp)
