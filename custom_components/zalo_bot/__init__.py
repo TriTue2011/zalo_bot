@@ -218,14 +218,17 @@ async def async_setup_entry(hass, entry):
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     def zalo_login():
-        resp = session.post(f"{zalo_server}/api/login", json={
-            "username": admin_user,
-            "password": admin_pass
-        })
-        if resp.status_code == 200 and resp.json().get("success"):
-            _LOGGER.info("Đăng nhập quản trị viên Zalo thành công")
-        else:
-            _LOGGER.error("Đăng nhập quản trị viên Zalo thất bại: %s", resp.text)
+        try:
+            resp = session.post(f"{zalo_server}/api/login", json={
+                "username": admin_user,
+                "password": admin_pass
+            }, timeout=10)
+            if resp.status_code == 200 and resp.json().get("success"):
+                _LOGGER.info("Đăng nhập quản trị viên Zalo thành công")
+            else:
+                _LOGGER.error("Đăng nhập quản trị viên Zalo thất bại: %s", resp.text)
+        except Exception as err:
+            _LOGGER.error("Lỗi kết nối tới máy chủ Zalo: %s", err)
 
     try:
         pass
