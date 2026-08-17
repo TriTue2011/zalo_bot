@@ -30,8 +30,8 @@ async def async_setup_entry(
     """Thiết lập cảm biến nhị phân."""
     config = hass.data[DOMAIN].get(entry.entry_id, {})
     zalo_server = config.get(CONF_ZALO_SERVER)
-    username = config.get(CONF_USERNAME)
-    password = config.get(CONF_PASSWORD)
+    username = config.get(CONF_USERNAME, "admin")
+    password = config.get(CONF_PASSWORD, "admin")
     coordinator = ZaloLoginCoordinator(hass, zalo_server, username, password)
     await coordinator.async_config_entry_first_refresh()
     async_add_entities([

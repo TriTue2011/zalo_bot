@@ -55,24 +55,25 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
+        config_data = {**self.config_entry.data, **self.config_entry.options}
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema({
                 vol.Required(
                     CONF_ZALO_SERVER,
-                    default=self.config_entry.data.get(CONF_ZALO_SERVER)
+                    default=config_data.get(CONF_ZALO_SERVER)
                 ): str,
                 vol.Required(
                     CONF_USERNAME,
-                    default=self.config_entry.data.get(CONF_USERNAME, "admin")
+                    default=config_data.get(CONF_USERNAME, "admin")
                 ): str,
                 vol.Required(
                     CONF_PASSWORD,
-                    default=self.config_entry.data.get(CONF_PASSWORD, "admin")
+                    default=config_data.get(CONF_PASSWORD, "admin")
                 ): str,
                 vol.Optional(
                     CONF_ENABLE_NOTIFICATIONS,
-                    default=self.config_entry.data.get(
+                    default=config_data.get(
                         CONF_ENABLE_NOTIFICATIONS, DEFAULT_ENABLE_NOTIFICATIONS
                     )
                 ): bool,

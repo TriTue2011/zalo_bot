@@ -42,7 +42,8 @@ class ZaloBotNotificationSwitch(SwitchEntity):
         self.config_entry = config_entry
         self._attr_unique_id = f"{config_entry.entry_id}_notifications"
         self._attr_device_info = get_device_info()
-        self._is_on = config_entry.data.get(CONF_ENABLE_NOTIFICATIONS, DEFAULT_ENABLE_NOTIFICATIONS)
+        config_data = {**config_entry.data, **config_entry.options}
+        self._is_on = config_data.get(CONF_ENABLE_NOTIFICATIONS, DEFAULT_ENABLE_NOTIFICATIONS)
 
     @property
     def is_on(self) -> bool:

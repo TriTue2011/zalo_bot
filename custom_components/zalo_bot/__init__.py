@@ -138,7 +138,7 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, entry):
     hass.data.setdefault(DOMAIN, {})
-    config = dict(entry.data)
+    config = {**entry.data, **entry.options}
 
     # Đảm bảo có cài đặt enable_notifications
     if CONF_ENABLE_NOTIFICATIONS not in config:
@@ -148,6 +148,9 @@ async def async_setup_entry(hass, entry):
     # (switch Markdown / select Markdown Color) khôi phục trong async_added_to_hass
     hass.data[DOMAIN][CONF_MARKDOWN_ENABLED] = DEFAULT_MARKDOWN_ENABLED
     hass.data[DOMAIN][CONF_MARKDOWN_COLOR] = DEFAULT_MARKDOWN_COLOR
+
+    # Lắng nghe sự thay đổi cấu hình từ Options Flow
+    entry.async_on_unload(entry.add_update_listener(async_update_options))
 
     # Khởi tạo session và các biến toàn cục
     global session, zalo_server, WWW_DIR, PUBLIC_DIR
@@ -1128,3 +1131,9 @@ async def async_unload_entry(hass, entry):
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id, None)
     return unload_ok
+
+
+async def async_update_options(hass, entry):
+    """Reload entry when options are updated."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
