@@ -1,6 +1,7 @@
 """Các tính năng liên quan đến quick message (tin nhắn nhanh) cho Zalo Bot."""
 import logging
 from .notification import show_result_notification
+from .const import zca_safe_integer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,7 +79,9 @@ async def async_remove_quick_message_service(hass, call, zalo_login):
     _LOGGER.debug("Dịch vụ async_remove_quick_message được gọi với: %s", call.data)
     try:
         await hass.async_add_executor_job(zalo_login)
-        item_ids = [int(item_id.strip()) for item_id in call.data["item_ids"].split(',')]
+        item_ids = [zca_safe_integer(item_id) for item_id in call.data["item_ids"].split(',')]
+        if not item_ids:
+            raise ValueError("Cần ít nhất một ID tin nhắn nhanh")
         payload = {
             "accountSelection": call.data["account_selection"],
             "itemIds": item_ids if len(item_ids) > 1 else item_ids[0]
@@ -113,14 +116,9 @@ async def async_update_quick_message_service(hass, call, zalo_login):
                 "params": ""
             }
         }
-        try:
-            item_id = int(call.data["item_id"])
-        except ValueError:
-            item_id = call.data["item_id"]
-
         payload = {
             "accountSelection": call.data["account_selection"],
-            "itemId": item_id,
+            "itemId": call.data["item_id"],
             "updatePayload": update_payload
         }
         _LOGGER.debug("Gửi payload đến updateQuickMessageByAccount: %s", payload)

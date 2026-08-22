@@ -584,13 +584,9 @@ async def async_lock_poll_service(hass, call, zalo_login):
     _LOGGER.debug("Dịch vụ async_lock_poll được gọi với: %s", call.data)
     try:
         await hass.async_add_executor_job(zalo_login)
-        try:
-            poll_id = int(call.data["poll_id"])
-        except ValueError:
-            poll_id = call.data["poll_id"]
         payload = {
             "accountSelection": call.data["account_selection"],
-            "pollId": poll_id
+            "pollId": call.data["poll_id"],
         }
         resp = await hass.async_add_executor_job(
             lambda: session.post(f"{zalo_server}/api/lockPollByAccount", json=payload)

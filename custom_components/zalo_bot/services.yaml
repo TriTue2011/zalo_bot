@@ -509,8 +509,8 @@ send_sticker:
   description: Gửi sticker
   fields:
     sticker_id:
-      description: ID của sticker cần gửi
-      example: "1234"
+      description: ID số của sticker (zca-js)
+      example: 1234
       required: true
       selector:
         text:
@@ -1796,8 +1796,8 @@ get_poll_detail:
   description: Lấy thông tin chi tiết của một cuộc bình chọn
   fields:
     poll_id:
-      description: ID của cuộc bình chọn
-      example: "poll123456"
+      description: ID số của cuộc bình chọn (zca-js)
+      example: 123456789
       required: true
       selector:
         text:

@@ -41,13 +41,9 @@ async def async_get_stickers_detail_service(hass, call, zalo_login):
     _LOGGER.debug("Dịch vụ async_get_stickers_detail được gọi với: %s", call.data)
     try:
         await hass.async_add_executor_job(zalo_login)
-        try:
-            sticker_id = int(call.data["sticker_id"])
-        except ValueError:
-            sticker_id = call.data["sticker_id"]
         payload = {
             "accountSelection": call.data["account_selection"],
-            "stickerId": sticker_id
+            "stickerAlbum": call.data["sticker_album"],
         }
         _LOGGER.debug("Gửi payload đến getStickersDetailByAccount: %s", payload)
         url = f"{zalo_server}/api/getStickersDetailByAccount"

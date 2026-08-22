@@ -4,6 +4,18 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 
 DOMAIN = "zalo_bot"
+MAX_SAFE_ZCA_INTEGER = 9_007_199_254_740_991
+
+
+def zca_safe_integer(value: object) -> int:
+    """ID poll/sticker/quick-message la number trong zca-js, khong phai Zalo ID."""
+    try:
+        number = int(str(value).strip())
+    except (TypeError, ValueError) as error:
+        raise vol.Invalid("ID phai la so nguyen an toan") from error
+    if number < 0 or number > MAX_SAFE_ZCA_INTEGER:
+        raise vol.Invalid("ID nam ngoai khoang so an toan cua zca-js")
+    return number
 
 # Configuration constants
 CONF_ZALO_SERVER = "zalo_server"
@@ -168,7 +180,7 @@ SERVICE_UNBLOCK_USER_SCHEMA = vol.Schema({
 })
 
 SERVICE_SEND_STICKER_SCHEMA = vol.Schema({
-    vol.Required("sticker_id"): cv.string,
+    vol.Required("sticker_id"): zca_safe_integer,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): cv.string,
@@ -439,7 +451,7 @@ SERVICE_GET_STICKERS_SCHEMA = vol.Schema({
 })
 
 SERVICE_GET_STICKERS_DETAIL_SCHEMA = vol.Schema({
-    vol.Required("sticker_album"): cv.string,
+    vol.Required("sticker_album"): zca_safe_integer,
     vol.Required("account_selection"): cv.string,
 })
 
@@ -483,12 +495,12 @@ SERVICE_CREATE_POLL_SCHEMA = vol.Schema({
 })
 
 SERVICE_GET_POLL_DETAIL_SCHEMA = vol.Schema({
-    vol.Required("poll_id"): cv.string,
+    vol.Required("poll_id"): zca_safe_integer,
     vol.Required("account_selection"): cv.string,
 })
 
 SERVICE_LOCK_POLL_SCHEMA = vol.Schema({
-    vol.Required("poll_id"): cv.string,
+    vol.Required("poll_id"): zca_safe_integer,
     vol.Required("account_selection"): cv.string,
 })
 
@@ -530,7 +542,7 @@ SERVICE_REMOVE_QUICK_MESSAGE_SCHEMA = vol.Schema({
 })
 
 SERVICE_UPDATE_QUICK_MESSAGE_SCHEMA = vol.Schema({
-    vol.Required("item_id"): cv.string,
+    vol.Required("item_id"): zca_safe_integer,
     vol.Required("keyword"): cv.string,
     vol.Required("title"): cv.string,
     vol.Required("account_selection"): cv.string,

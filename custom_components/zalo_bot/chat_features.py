@@ -606,7 +606,7 @@ async def async_send_sticker_service(hass, call, zalo_login):
     try:
         await hass.async_add_executor_job(zalo_login)
         msg_type = call.data.get("type", "0")
-        sticker_id = int(call.data["sticker_id"])
+        sticker_id = call.data["sticker_id"]
         sticker = {
             "id": sticker_id,
             "cateId": 526,
