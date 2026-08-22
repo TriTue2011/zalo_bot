@@ -1,8 +1,8 @@
 """Zalo Bot integration."""
-import json
 import logging
 import os
 import requests
+from homeassistant.loader import async_get_loaded_integration
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from .const import (
@@ -123,19 +123,11 @@ session = requests.Session()
 zalo_server = None
 WWW_DIR = None
 PUBLIC_DIR = None
+_PHIEN_BAN = ""
 
 def _phien_ban() -> str:
-    """Số phiên bản lấy thẳng từ manifest.json.
-
-    Trước đây ghi cứng "2026.5.10" nên mỗi lần nâng manifest là thiết bị trong
-    Home Assistant vẫn hiện số cũ — người dùng tưởng bản cập nhật chưa vào.
-    """
-    try:
-        with open(os.path.join(os.path.dirname(__file__), "manifest.json"),
-                  encoding="utf-8") as f:
-            return json.load(f).get("version", "")
-    except Exception:  # manifest luôn có, nhưng thiếu nó thì đừng chặn khởi động
-        return ""
+    """Trả phiên bản đã được loader Home Assistant nạp trong lúc setup."""
+    return _PHIEN_BAN
 
 
 def get_device_info():
@@ -151,6 +143,11 @@ async def async_setup(hass, config):
     return True
 
 async def async_setup_entry(hass, entry):
+    global _PHIEN_BAN
+    # Config-entry setup chi bat dau sau khi loader da nap manifest; dung cache
+    # nay de entity constructor khong bao gio phai mo tep tren event loop.
+    integration = async_get_loaded_integration(hass, DOMAIN)
+    _PHIEN_BAN = str(integration.manifest.get("version", ""))
     hass.data.setdefault(DOMAIN, {})
     config = {**entry.data, **entry.options}
 
@@ -1149,4 +1146,3 @@ async def async_unload_entry(hass, entry):
 async def async_update_options(hass, entry):
     """Reload entry when options are updated."""
     await hass.config_entries.async_reload(entry.entry_id)
-
