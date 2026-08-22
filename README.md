@@ -8,14 +8,29 @@
 
 ## Giới thiệu
 
-Dự án này cung cấp một bot Zalo tích hợp cho Home Assistant, giúp bạn gửi, nhận thông báo và điều khiển thiết bị qua Zalo một cách tiện lợi!
+Dự án này cung cấp tích hợp Zalo Bot cho Home Assistant, giúp gửi/nhận thông
+báo, gọi service và xây automation qua Zalo cá nhân.
+
+> Cần cài **cả hai phần**: gateway Zalo Bot (add-on hoặc Docker) để đăng nhập
+> Zalo, và custom integration này để Home Assistant có entity/service. HACS
+> không tự thay thế gateway Node.js.
+
+## Phiên bản và cập nhật
+
+- Custom integration hiện tại: **2026.8.22.2**.
+- Add-on/gateway tương thích: **2026.8.22.1** hoặc mới hơn.
+
+Trong HACS, chọn **Zalo Bot → Download** rồi **khởi động lại Home Assistant**.
+Không cần xoá integration hay quét QR lại. Nếu cũng cập nhật add-on, cập nhật
+trong **Settings → Add-ons → Zalo Bot** và khởi động lại add-on; giữ nguyên
+`data_directory` để bảo toàn cookie, webhook và proxy.
 
 
 ## Hướng dẫn cài đặt
 
 ### 1. Cài đặt qua HACS(Khuyến nghị)
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=smarthomeblack&repository=zalo_bot)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=TriTue2011&repository=zalo_bot)
 
 - Tải về sau đó khởi động lại Home Assistant
 
@@ -30,8 +45,14 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 
 ### 3. Cấu hình
 
-- Nếu cài Server Zalo Bot bằng Addon thì mặc định zalo_server để nguyên
-- user và pass điền admin
+- Nếu cài Zalo Bot bằng add-on trên cùng máy Home Assistant, dùng
+  `http://localhost:3000`. Nếu gateway ở máy khác, dùng
+  `http://<ip-may-gateway>:3000`.
+- Username mặc định là `admin`. Password là giá trị đã điền khi cài add-on, hoặc
+  mật khẩu ngẫu nhiên trong `THONG-TIN-DANG-NHAP.txt`/tab **Log** của add-on.
+  Không còn mật khẩu mặc định `admin` / `admin` cho cài đặt mới.
+- Quét QR và xác nhận tài khoản Zalo trong giao diện gateway trước khi thêm
+  integration.
 
 <img title="Zalo Bot" src="https://raw.githubusercontent.com/TriTue2011/zalo_bot/refs/heads/main/img/3.png" width="100%"></img>
 
@@ -46,7 +67,7 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 - Vào trang quản lý ZALO BOT, Chọn Theo dõi tin nhắn và lấy Thread ID 
 - Sau đó dùng tài khoản bất kỳ gửi tin nhắn cho Acc Bot hoặc thêm Acc bot vào trong 1 nhóm, sau đó gửi tin nhắn từ tài khoản chính vào nhóm
 - Dùng Thread ID để điền vào cấu hình tự động hóa, như gửi ảnh, gửi tin nhắn
-- Nếu gửi cho tài khoản cá nhân thì type để user, còn gửi vào trong nhóm thì type để Group
+- Nếu gửi cho tài khoản cá nhân, đặt `type: "0"`; gửi vào nhóm đặt `type: "1"`.
 
 <img title="Zalo Bot" src="https://raw.githubusercontent.com/TriTue2011/zalo_bot/refs/heads/main/img/5.png" width="100%"></img>
 
@@ -100,6 +121,29 @@ mode: single
 ```
 
 Thay 85276xxxxxxxxx203115 bằng uidFrom của bạn, thay @Blackbot thành tên bot của bạn, thay +84123456789 thành sdt của bot.
+
+### ID Zalo và ID thao tác
+
+| Loại | Ví dụ | Cách nhập |
+|---|---|---|
+| ID người dùng, nhóm, tin nhắn | `5841349563795164131` | Giữ nguyên dạng **text** để không mất chữ số với ID lớn. |
+| ID poll, sticker, sticker album, quick message | `123456789` | Nhập số nguyên không âm, tối đa `9007199254740991`; không dùng `poll123`, số thập phân hoặc ID quá lớn. |
+
+Poll, sticker và quick message là các API `zca-js` dùng JavaScript number. Bản
+hiện tại kiểm tra dữ liệu trước khi gọi gateway để tránh JavaScript làm tròn
+sang một ID khác.
+
+## Khắc phục lỗi thường gặp
+
+- **`Detected blocking call to open ... manifest.json`**: custom integration
+  đang cũ. Cập nhật lên **2026.8.22.2** qua HACS rồi khởi động lại Home
+  Assistant. Bản mới lấy version từ cache của Home Assistant, không mở file
+  trong event loop.
+- **Không kết nối được gateway**: từ Home Assistant kiểm tra
+  `http://<ip-may-gateway>:3000/admin-login` trả HTTP `200`, sau đó kiểm tra
+  username/password. Đừng mở cổng 3000 trực tiếp ra Internet.
+- **Upload album trả `413`**: giảm xuống tối đa 24 ảnh và tổng 100 MB mỗi
+  request. Đây là giới hạn bảo vệ RAM/ổ đĩa của gateway.
 
 ## Tính năng
 
