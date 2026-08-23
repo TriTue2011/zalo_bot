@@ -37,7 +37,7 @@ async def async_undo_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "hủy tin nhắn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_undo_message: %s", e)
@@ -66,7 +66,7 @@ async def async_create_reminder_service(hass, call, zalo_login):
         await show_result_notification(hass, "tạo lời nhắc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_create_reminder: %s", e)
@@ -91,7 +91,7 @@ async def async_remove_reminder_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa lời nhắc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_remove_reminder: %s", e)
@@ -115,7 +115,7 @@ async def async_update_settings_service(hass, call, zalo_login):
         await show_result_notification(hass, "cập nhật cài đặt", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_update_settings: %s", e)
@@ -150,7 +150,7 @@ async def async_set_mute_service(hass, call, zalo_login):
         await show_result_notification(hass, "cài đặt tắt thông báo", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_set_mute: %s", e)
@@ -182,7 +182,7 @@ async def async_set_pinned_conversation_service(hass, call, zalo_login):
         await show_result_notification(hass, "ghim/bỏ ghim cuộc trò chuyện", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_set_pinned_conversation: %s", e)
@@ -204,7 +204,7 @@ async def async_get_unread_mark_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách cuộc trò chuyện chưa đọc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_unread_mark: %s", e)
@@ -227,7 +227,7 @@ async def async_add_unread_mark_service(hass, call, zalo_login):
         await show_result_notification(hass, "đánh dấu chưa đọc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_add_unread_mark: %s", e)
@@ -250,7 +250,7 @@ async def async_remove_unread_mark_service(hass, call, zalo_login):
         await show_result_notification(hass, "bỏ đánh dấu chưa đọc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_remove_unread_mark: %s", e)
@@ -273,7 +273,7 @@ async def async_delete_chat_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa cuộc trò chuyện", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_delete_chat: %s", e)
@@ -295,7 +295,7 @@ async def async_get_archived_chat_list_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách cuộc trò chuyện lưu trữ", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_archived_chat_list: %s", e)
@@ -317,7 +317,7 @@ async def async_get_auto_delete_chat_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách tự động xóa tin nhắn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_auto_delete_chat: %s", e)
@@ -341,7 +341,7 @@ async def async_update_auto_delete_chat_service(hass, call, zalo_login):
         await show_result_notification(hass, "cập nhật tự động xóa tin nhắn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_update_auto_delete_chat: %s", e)
@@ -363,7 +363,7 @@ async def async_get_hidden_conversations_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách cuộc trò chuyện ẩn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_hidden_conversations: %s", e)
@@ -389,7 +389,7 @@ async def async_set_hidden_conversations_service(hass, call, zalo_login):
         await show_result_notification(hass, "thiết lập trạng thái ẩn cuộc trò chuyện", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_set_hidden_conversations: %s", e)
@@ -413,7 +413,7 @@ async def async_update_hidden_convers_pin_service(hass, call, zalo_login):
         await show_result_notification(hass, "cập nhật mã PIN cuộc trò chuyện ẩn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_update_hidden_convers_pin: %s", e)
@@ -435,7 +435,7 @@ async def async_reset_hidden_convers_pin_service(hass, call, zalo_login):
         await show_result_notification(hass, "đặt lại mã PIN cuộc trò chuyện ẩn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_reset_hidden_convers_pin: %s", e)
@@ -457,7 +457,7 @@ async def async_get_mute_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách cuộc trò chuyện tắt thông báo", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_mute: %s", e)
@@ -479,7 +479,7 @@ async def async_get_pin_conversations_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách cuộc trò chuyện ghim", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_pin_conversations: %s", e)
@@ -555,7 +555,7 @@ async def async_add_reaction_service(hass, call, zalo_login):
         await show_result_notification(hass, "thêm cảm xúc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_add_reaction: %s", e)
@@ -591,7 +591,7 @@ async def async_delete_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa tin nhắn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_delete_message: %s", e)
@@ -625,7 +625,7 @@ async def async_forward_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "chuyển tiếp tin nhắn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
 
     except Exception as e:
@@ -649,7 +649,7 @@ async def async_parse_link_service(hass, call, zalo_login):
         await show_result_notification(hass, "phân tích link", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_parse_link: %s", e)
@@ -675,7 +675,7 @@ async def async_send_card_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi danh thiếp", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_card: %s", e)
@@ -707,7 +707,7 @@ async def async_send_link_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi link", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_link: %s", e)
@@ -729,7 +729,7 @@ async def async_get_labels_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách nhãn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_labels: %s", e)
@@ -755,7 +755,7 @@ async def async_block_view_feed_service(hass, call, zalo_login):
         await show_result_notification(hass, "chặn/bỏ chặn xem nhật ký", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_block_view_feed: %s", e)
@@ -778,7 +778,7 @@ async def async_change_account_avatar_service(hass, call, zalo_login):
         await show_result_notification(hass, "thay đổi ảnh đại diện", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_change_account_avatar: %s", e)

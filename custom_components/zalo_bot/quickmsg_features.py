@@ -41,7 +41,7 @@ async def async_add_quick_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "thêm tin nhắn nhanh", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_add_quick_message: %s", e)
@@ -67,7 +67,7 @@ async def async_get_quick_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách tin nhắn nhanh", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_quick_message: %s", e)
@@ -96,7 +96,7 @@ async def async_remove_quick_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa tin nhắn nhanh", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_remove_quick_message: %s", e)
@@ -132,7 +132,7 @@ async def async_update_quick_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "cập nhật tin nhắn nhanh", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_update_quick_message: %s", e)

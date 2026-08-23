@@ -1,0 +1,40 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Kết nối máy chủ Zalo Bot",
+        "description": "Điền địa chỉ máy chủ Zalo Bot và tài khoản quản trị. Mật khẩu do add-on sinh ra nằm trong tệp THONG-TIN-DANG-NHAP.txt ở thư mục dữ liệu của add-on.",
+        "data": {
+          "zalo_server": "Địa chỉ máy chủ",
+          "username": "Tài khoản quản trị",
+          "password": "Mật khẩu",
+          "enable_notifications": "Hiện thông báo kết quả trong Home Assistant"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Không gọi được tới máy chủ Zalo. Kiểm tra địa chỉ, cổng, và xem add-on đã chạy chưa.",
+      "invalid_auth": "Máy chủ từ chối tài khoản hoặc mật khẩu. Nếu vừa gõ sai nhiều lần thì máy chủ khoá IP 15 phút, hãy chờ rồi thử lại."
+    },
+    "abort": {
+      "already_configured": "Zalo Bot đã được cấu hình rồi."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sửa cấu hình Zalo Bot",
+        "data": {
+          "zalo_server": "Địa chỉ máy chủ",
+          "username": "Tài khoản quản trị",
+          "password": "Mật khẩu",
+          "enable_notifications": "Hiện thông báo kết quả trong Home Assistant"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Không gọi được tới máy chủ Zalo. Kiểm tra địa chỉ, cổng, và xem add-on đã chạy chưa.",
+      "invalid_auth": "Máy chủ từ chối tài khoản hoặc mật khẩu. Nếu vừa gõ sai nhiều lần thì máy chủ khoá IP 15 phút, hãy chờ rồi thử lại."
+    }
+  }
+}

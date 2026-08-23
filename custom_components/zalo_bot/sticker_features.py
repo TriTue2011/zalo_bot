@@ -29,7 +29,7 @@ async def async_get_stickers_service(hass, call, zalo_login):
         await show_result_notification(hass, "tìm kiếm sticker", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_stickers: %s", e)
@@ -55,7 +55,7 @@ async def async_get_stickers_detail_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy chi tiết sticker", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_stickers_detail: %s", e)

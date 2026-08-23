@@ -1135,11 +1135,19 @@ async def async_setup_entry(hass, entry):
     return True
 async def async_unload_entry(hass, entry):
     """Unload a config entry."""
+    global session, zalo_server
     # Unload các platform
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     # Xóa dữ liệu entry
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id, None)
+        # Đóng phiên HTTP: nó giữ một connection pool, bỏ lại thì pool nằm treo
+        # tới khi Home Assistant khởi động lại. session.close() có chạm mạng nên
+        # đẩy xuống executor.
+        if session is not None:
+            await hass.async_add_executor_job(session.close)
+        session = None
+        zalo_server = None
     return unload_ok
 
 

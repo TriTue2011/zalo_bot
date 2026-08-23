@@ -86,7 +86,7 @@ class ZaloLoginCoordinator(DataUpdateCoordinator):
                     timeout=aiohttp.ClientTimeout(total=5)
                 ) as resp:
                     self.server_reachable = True
-            except:
+            except (aiohttp.ClientError, TimeoutError, OSError):
                 self.login_success = False
                 return {"logged_in": False, "total": 0, "accounts": []}
             # Hỏi xem phiên cũ còn dùng được không TRƯỚC khi đăng nhập lại.
@@ -131,7 +131,7 @@ class ZaloLoginCoordinator(DataUpdateCoordinator):
                             "total": response.get("total", 0),
                             "accounts": response.get("data", [])
                         }
-                except:
+                except (ValueError, aiohttp.ClientError):
                     pass
         except Exception:
             self.server_reachable = False

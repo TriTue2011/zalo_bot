@@ -33,7 +33,7 @@ async def async_edit_reminder_service(hass, call, zalo_login):
         await show_result_notification(hass, "sửa lời nhắc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_edit_reminder: %s", e)
@@ -56,7 +56,7 @@ async def async_get_reminder_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy thông tin nhắc hẹn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_reminder: %s", e)
@@ -87,7 +87,7 @@ async def async_get_list_reminder_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách lời nhắc", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_list_reminder: %s", e)
@@ -110,7 +110,7 @@ async def async_get_reminder_responses_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách phản hồi nhắc hẹn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_reminder_responses: %s", e)

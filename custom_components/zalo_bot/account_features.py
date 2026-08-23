@@ -32,7 +32,7 @@ async def async_get_account_details_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy chi tiết tài khoản", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
 
     except Exception as e:
@@ -52,7 +52,7 @@ async def async_get_logged_accounts_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách tài khoản", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
 
     except Exception as e:
@@ -74,7 +74,7 @@ async def async_get_account_webhooks_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách webhook", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
 
     except Exception as e:
@@ -95,7 +95,7 @@ async def async_get_account_webhook_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy thông tin webhook", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
         
     except Exception as e:
@@ -126,7 +126,7 @@ async def async_set_account_webhook_service(hass, call, zalo_login):
         await show_result_notification(hass, "cài đặt webhook", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
         
     except Exception as e:
@@ -152,7 +152,7 @@ async def async_delete_account_webhook_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa webhook", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
         
     except Exception as e:
@@ -180,7 +180,7 @@ async def async_get_proxies_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách proxy", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
         
     except Exception as e:
@@ -203,7 +203,7 @@ async def async_add_proxy_service(hass, call, zalo_login):
         await show_result_notification(hass, "thêm proxy", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
         
     except Exception as e:
@@ -226,7 +226,7 @@ async def async_remove_proxy_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa proxy", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
         
     except Exception as e:

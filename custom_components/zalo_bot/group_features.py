@@ -35,7 +35,7 @@ async def async_create_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "tạo nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_create_group: %s", e)
@@ -63,7 +63,7 @@ async def async_get_group_info_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy thông tin nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_group_info: %s", e)
@@ -92,7 +92,7 @@ async def async_add_user_to_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "thêm người dùng vào nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_add_user_to_group: %s", e)
@@ -121,7 +121,7 @@ async def async_remove_user_from_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa người dùng khỏi nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_remove_user_from_group: %s", e)
@@ -145,7 +145,7 @@ async def async_change_group_name_service(hass, call, zalo_login):
         await show_result_notification(hass, "đổi tên nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_change_group_name: %s", e)
@@ -197,7 +197,7 @@ async def async_change_group_avatar_service(hass, call, zalo_login):
         await show_result_notification(hass, "đổi ảnh đại diện nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_change_group_avatar: %s", e)
@@ -219,7 +219,7 @@ async def async_get_all_groups_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách tất cả các nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_all_groups: %s", e)
@@ -251,7 +251,7 @@ async def async_get_group_chat_history_service(hass, call, zalo_login):
                     if msg.get("data", {}).get("dName") is None:
                         msg["data"]["dName"] = msg.get("data", {}).get("uidFrom") or "Unknown"
             return result
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_group_chat_history: %s", e)
@@ -276,7 +276,7 @@ async def async_add_group_deputy_service(hass, call, zalo_login):
         await show_result_notification(hass, "thêm phó nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_add_group_deputy: %s", e)
@@ -301,7 +301,7 @@ async def async_remove_group_deputy_service(hass, call, zalo_login):
         await show_result_notification(hass, "xóa phó nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_remove_group_deputy: %s", e)
@@ -326,7 +326,7 @@ async def async_change_group_owner_service(hass, call, zalo_login):
         await show_result_notification(hass, "chuyển quyền sở hữu nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_change_group_owner: %s", e)
@@ -349,7 +349,7 @@ async def async_disperse_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "giải tán nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_disperse_group: %s", e)
@@ -372,7 +372,7 @@ async def async_enable_group_link_service(hass, call, zalo_login):
         await show_result_notification(hass, "bật liên kết nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_enable_group_link: %s", e)
@@ -395,7 +395,7 @@ async def async_disable_group_link_service(hass, call, zalo_login):
         await show_result_notification(hass, "tắt liên kết nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_disable_group_link: %s", e)
@@ -418,7 +418,7 @@ async def async_join_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "tham gia nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_join_group: %s", e)
@@ -442,7 +442,7 @@ async def async_leave_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "rời nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_leave_group: %s", e)
@@ -469,7 +469,7 @@ async def async_create_note_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "tạo ghi chú nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_create_note_group: %s", e)
@@ -496,7 +496,7 @@ async def async_edit_note_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "sửa ghi chú nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_edit_note_group: %s", e)
@@ -519,7 +519,7 @@ async def async_get_list_board_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy danh sách bảng tin nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_list_board: %s", e)
@@ -549,7 +549,7 @@ async def async_create_poll_service(hass, call, zalo_login):
         await show_result_notification(hass, "tạo bình chọn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_create_poll: %s", e)
@@ -572,7 +572,7 @@ async def async_get_poll_detail_service(hass, call, zalo_login):
         await show_result_notification(hass, "lấy chi tiết bình chọn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_get_poll_detail: %s", e)
@@ -595,7 +595,7 @@ async def async_lock_poll_service(hass, call, zalo_login):
         await show_result_notification(hass, "khóa bình chọn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_lock_poll: %s", e)

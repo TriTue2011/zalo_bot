@@ -1,8 +1,22 @@
 """Các tiện ích xử lý thông báo."""
 import logging
-import time
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _ma_thong_bao(service_name: str, hau_to: str = "result") -> str:
+    """Mã thông báo ỔN ĐỊNH cho mỗi dịch vụ.
+
+    Home Assistant chỉ thay thế thông báo cũ khi trùng notification_id. Bản cũ
+    ghép thêm int(time.time()) nên mỗi lần gọi là một mã khác, tức không bao giờ
+    thay thế: một automation gửi tin mỗi phút chất 1.440 thông báo mỗi ngày vào
+    giao diện, phải bấm tay từng cái để dọn.
+
+    Mã ổn định nghĩa là mỗi dịch vụ giữ đúng một thông báo, luôn hiện kết quả
+    gần nhất.
+    """
+    an_toan = "".join(c if c.isalnum() else "_" for c in str(service_name)).strip("_")
+    return f"zalo_bot_{an_toan or 'service'}_{hau_to}"
 
 
 async def show_result_notification(hass, service_name, resp, error=None):
@@ -42,7 +56,7 @@ async def show_result_notification(hass, service_name, resp, error=None):
                 {
                     "message": f"Lỗi khi thực hiện {service_name}: {str(error)}",
                     "title": f"Zalo Bot - Lỗi {service_name}",
-                    "notification_id": f"zalo_bot_{service_name}_error_{int(time.time())}"
+                    "notification_id": _ma_thong_bao(service_name, "error")
                 }
             )
             return
@@ -105,7 +119,7 @@ async def show_result_notification(hass, service_name, resp, error=None):
                     {
                         "message": f"Thực hiện {service_name} thành công!\n\n{message}",
                         "title": f"Zalo Bot - {service_name} thành công",
-                        "notification_id": f"zalo_bot_{service_name}_{int(time.time())}"
+                        "notification_id": _ma_thong_bao(service_name)
                     }
                 )
             else:
@@ -115,7 +129,7 @@ async def show_result_notification(hass, service_name, resp, error=None):
                     {
                         "message": f"Thực hiện {service_name} thất bại!\nLỗi: {message}",
                         "title": f"Zalo Bot - {service_name} thất bại",
-                        "notification_id": f"zalo_bot_{service_name}_{int(time.time())}"
+                        "notification_id": _ma_thong_bao(service_name)
                     }
                 )
         except Exception as e:
@@ -126,7 +140,7 @@ async def show_result_notification(hass, service_name, resp, error=None):
                 {
                     "message": f"Lỗi khi hiển thị kết quả: {str(e)}",
                     "title": "Zalo Bot - Lỗi hiển thị",
-                    "notification_id": f"zalo_bot_notification_error_{int(time.time())}"
+                    "notification_id": "zalo_bot_notification_error"
                 }
             )
     except Exception as e:

@@ -352,7 +352,7 @@ async def async_send_message_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi tin nhắn", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
 
     except Exception as e:
@@ -416,7 +416,7 @@ async def async_send_file_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi file", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Exception trong async_send_file_service: %s", e, exc_info=True)
@@ -476,7 +476,7 @@ async def async_send_image_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi ảnh", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Exception trong async_send_image_service: %s", e, exc_info=True)
@@ -593,7 +593,7 @@ async def async_send_video_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi video", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_video: %s", e)
@@ -626,7 +626,7 @@ async def async_send_sticker_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi sticker", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_sticker: %s", e)
@@ -661,7 +661,7 @@ async def async_send_voice_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi tin nhắn thoại", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_voice: %s", e)
@@ -684,7 +684,7 @@ async def async_send_typing_event_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi thông báo typing", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_typing_event: %s", e)
@@ -737,7 +737,7 @@ async def async_send_image_to_user_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi ảnh cho người dùng", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
 
     except Exception as e:
@@ -790,7 +790,7 @@ async def async_send_image_to_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi ảnh cho nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_image_to_group: %s", e)
@@ -851,7 +851,7 @@ async def async_send_images_to_user_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi nhiều ảnh cho người dùng", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
     except Exception as e:
         _LOGGER.error("Lỗi trong async_send_images_to_user: %s", e)
@@ -923,7 +923,7 @@ async def async_send_images_to_group_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi nhiều ảnh cho nhóm", resp)
         try:
             return resp.json()
-        except:
+        except ValueError:
             return {"text": resp.text}
 
     except Exception as e:
