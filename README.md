@@ -17,8 +17,12 @@ báo, gọi service và xây automation qua Zalo cá nhân.
 
 ## Phiên bản và cập nhật
 
-- Custom integration hiện tại: **2026.8.22.2**.
-- Add-on/gateway tương thích: **2026.8.22.1** hoặc mới hơn.
+- Custom integration hiện tại: **2026.8.23.4**.
+- Add-on/gateway tương thích: **2026.8.23.3** hoặc mới hơn.
+
+> **Nên cập nhật cả hai.** Bản 2026.8.23 sửa một lỗi khiến gateway tự xoá cookie
+> đăng nhập khi mạng chập chờn, và cắt việc tích hợp đăng nhập lại trước mỗi
+> lượt gọi — trên máy ARM mỗi lần đăng nhập làm gateway đứng hình 3,4 giây.
 
 Trong HACS, chọn **Zalo Bot → Download** rồi **khởi động lại Home Assistant**.
 Không cần xoá integration hay quét QR lại. Nếu cũng cập nhật add-on, cập nhật
@@ -44,6 +48,19 @@ Nếu không sử dụng HACS, bạn có thể cài đặt thủ công như sau:
 - Vào Cài đặt > Thiết bị & Dịch vụ > Thêm tích hợp mới > Chọn "Zalo Bot" và cấu hình theo hướng dẫn.
 
 ### 3. Cấu hình
+
+Khung cấu hình sẽ **thử kết nối ngay** khi bạn bấm Gửi. Sai địa chỉ thì báo
+"Không gọi được tới máy chủ Zalo", sai mật khẩu thì báo "Máy chủ từ chối tài
+khoản hoặc mật khẩu" — không phải đợi tới lúc gọi service đầu tiên mới biết.
+
+Địa chỉ máy chủ được chuẩn hoá tự động: gõ `172.16.10.28:3000` hay
+`http://172.16.10.28:3000/` đều được.
+
+**Mật khẩu** không còn điền sẵn `admin`. Gateway tự sinh một mật khẩu ngẫu nhiên
+lần chạy đầu và ghi vào tệp `THONG-TIN-DANG-NHAP.txt` trong thư mục dữ liệu của
+add-on — mở bằng File editor hoặc Samba là thấy. Gõ đại vài lần sẽ bị máy chủ
+khoá IP 15 phút.
+
 
 - Nếu cài Zalo Bot bằng add-on trên cùng máy Home Assistant, dùng
   `http://localhost:3000`. Nếu gateway ở máy khác, dùng
@@ -133,12 +150,104 @@ Poll, sticker và quick message là các API `zca-js` dùng JavaScript number. B
 hiện tại kiểm tra dữ liệu trước khi gọi gateway để tránh JavaScript làm tròn
 sang một ID khác.
 
+## Định dạng chữ: đậm, nghiêng, màu, cỡ
+
+Zalo cá nhân không hiểu markdown. Tích hợp này nhận markdown quen thuộc rồi tự
+quy ra mã style của Zalo, nên trong automation bạn cứ viết bình thường.
+
+### Bật và chọn màu
+
+Sau khi cài, thiết bị **Zalo Bot** có hai thực thể điều khiển việc này:
+
+| Thực thể | Việc |
+|---|---|
+| Công tắc **Markdown** | Bật/tắt toàn bộ. Tắt thì tin gửi đi nguyên văn, kể cả dấu `**`. |
+| Ô chọn **Markdown Color** | `none` · `red` · `orange` · `yellow` · `green` |
+
+Cả hai nhớ lựa chọn qua lần khởi động lại Home Assistant.
+
+**Màu chỉ áp cho phần in đậm.** Chọn `red` thì `**29°C**` ra đỏ và đậm; phần
+nghiêng hay gạch chân vẫn màu thường. Đây là chủ ý — tô màu mọi thứ thì tin nhắn
+rối và khó đọc.
+
+### Cú pháp nhận được
+
+| Viết | Ra |
+|---|---|
+| `**chữ**` | đậm |
+| `*chữ*` | nghiêng |
+| `***chữ***` | đậm + nghiêng |
+| `~~chữ~~` | gạch ngang |
+| `__chữ__` | gạch chân |
+| `` `chữ` `` | nghiêng (Zalo không có kiểu chữ máy) |
+| `> chữ` | nghiêng |
+| `# Tiêu đề` · `## Mục` | to + đậm |
+| `### Mục nhỏ` | đậm |
+| `#### …` tới `###### …` | chữ nhỏ |
+| `[chữ](https://…)` | giữ chữ, bỏ cú pháp link |
+
+**Zalo chỉ có hai cỡ chữ**, to và nhỏ. Nên `#` và `##` cho ra kết quả giống
+nhau, `####` tới `######` cũng vậy. Không có cỡ nào lớn hơn `##`.
+
+Emoji đếm là hai đơn vị trong cách Zalo đánh dấu khoảng chữ; tích hợp đã quy đổi
+sẵn nên bạn đặt emoji ở đâu cũng không làm lệch phần in đậm.
+
+### Ví dụ
+
+```yaml
+action: zalo_bot.send_message
+data:
+  account_selection: "{{ states('sensor.zalo_account') }}"
+  thread_id: "zalo:1234567890123456789"
+  type: "0"
+  message: |
+    # Báo động
+    Nhiệt độ phòng khách **29°C** — vượt ngưỡng *27°C*.
+    > Điều hoà đã tự bật.
+```
+
+### Tích hợp không tự tô đậm giúp bạn
+
+Nó chỉ dịch những gì bạn đã viết. Muốn bot **tự** nhận ra số liệu rồi tô đậm —
+"Nhiệt độ: 29°C" tự đậm phần `29°C` mà không cần gõ `**` — thì đó là việc của
+gateway `chatgpt2api`, không phải của tích hợp này.
+
+## Thực thể tích hợp tạo ra
+
+Tất cả nằm dưới một thiết bị tên **Zalo Bot**.
+
+| Thực thể | Kiểu | Cho biết gì |
+|---|---|---|
+| **Zalo Server** | binary_sensor | Máy chủ gateway **còn sống** không. Bật nghĩa là gọi được, kể cả khi mật khẩu sai. |
+| **Zalo Login** | binary_sensor | Đã có tài khoản Zalo nào **đăng nhập** chưa. Thuộc tính kèm theo: `total_accounts`, `accounts`. |
+| **Markdown** | switch | Bật/tắt dịch markdown sang định dạng Zalo |
+| **Markdown Color** | select | Màu cho phần in đậm |
+| **Thông báo** | switch | Hiện kết quả mỗi lần gọi service dưới dạng thông báo trong HA |
+
+Hai cảm biến cập nhật **mỗi 60 giây**.
+
+> Từ **2026.8.23.3** trở đi, "Zalo Server" báo đúng trạng thái máy chủ. Bản
+> trước nó báo trạng thái *đăng nhập*, nên máy chủ đang chạy mà sai mật khẩu thì
+> nó vẫn tắt — automation nào dựa vào nó để biết máy chủ còn sống sẽ bị đánh
+> lừa. Nếu bạn đang có automation dùng thực thể này, kiểm lại xem nó cần "máy
+> chủ sống" hay "đã đăng nhập".
+
 ## Khắc phục lỗi thường gặp
 
 - **`Detected blocking call to open ... manifest.json`**: custom integration
-  đang cũ. Cập nhật lên **2026.8.22.2** qua HACS rồi khởi động lại Home
-  Assistant. Bản mới lấy version từ cache của Home Assistant, không mở file
-  trong event loop.
+  đang cũ. Cập nhật qua HACS rồi khởi động lại Home Assistant. Bản mới lấy
+  version từ cache của Home Assistant, không mở file trong event loop.
+- **Gateway phản hồi chậm, thỉnh thoảng bỏ lỡ tin Zalo**: cập nhật **cả hai**
+  phần lên 2026.8.23 trở lên. Bản cũ đăng nhập lại trước mỗi lượt gọi service và
+  thêm một lần mỗi 60 giây; mỗi lần đăng nhập làm gateway đứng hình 3,4 giây
+  trên máy ARM.
+- **Cảnh báo `Đăng nhập máy chủ Zalo thất bại`**: mật khẩu trong cấu hình không
+  còn khớp. Lấy lại từ `THONG-TIN-DANG-NHAP.txt` trong thư mục dữ liệu của
+  add-on, rồi sửa trong **Cài đặt → Thiết bị & Dịch vụ → Zalo Bot → Cấu hình**.
+- **Đăng nhập bị từ chối liên tục dù mật khẩu đúng**: gõ sai quá 10 lần trong 15
+  phút thì máy chủ khoá IP. Chờ 15 phút.
+- **`# Tiêu đề` không to hơn `## Mục`**: đúng như vậy — Zalo chỉ có hai cỡ chữ.
+  Xem mục Định dạng chữ ở trên.
 - **Không kết nối được gateway**: từ Home Assistant kiểm tra
   `http://<ip-may-gateway>:3000/admin-login` trả HTTP `200`, sau đó kiểm tra
   username/password. Đừng mở cổng 3000 trực tiếp ra Internet.
@@ -229,6 +338,24 @@ sang một ID khác.
 - Thêm/xóa cuộc trò chuyện khỏi nhãn
 
 ---
+
+## Có gì mới ở 2026.8.23
+
+- **Không đăng nhập lại ở mỗi lượt gọi nữa.** Tích hợp giữ phiên 6 tiếng, chỉ
+  đăng nhập lại khi hết hạn hoặc khi máy chủ trả 401. Cảm biến hỏi
+  `/api/check-auth` trước thay vì đăng nhập mù mỗi phút.
+- **Mọi lời gọi HTTP có hạn chờ.** Trước đây 98 trên 99 lời gọi chờ vô hạn; máy
+  chủ treo là chiếm luôn thread của Home Assistant.
+- **Cảm biến "Zalo Server" báo đúng trạng thái máy chủ**, không phải trạng thái
+  đăng nhập.
+- **Thông báo thôi chồng chất.** Mỗi dịch vụ giữ đúng một thông báo, luôn hiện
+  kết quả gần nhất. Bản cũ đẻ thông báo mới mỗi lần gọi — một automation chạy
+  mỗi phút chất 1.440 cái mỗi ngày.
+- **Config flow kiểm tra kết nối** và chuẩn hoá địa chỉ máy chủ; thêm tiếng Việt
+  và tiếng Anh cho khung cấu hình.
+- **`# Tiêu đề` dùng đúng mã cỡ chữ Zalo hiểu.** Trước đây nó gửi `f_20` — mã
+  Zalo không biết — nên tiêu đề chỉ ra đậm chứ không to hơn.
+- Đóng phiên HTTP khi gỡ tích hợp; bỏ 18 tệp `.pyc` khỏi repo.
 
 ## Đóng góp
 Mọi đóng góp, báo lỗi hoặc ý tưởng mới đều được hoan nghênh qua GitHub Issues hoặc Pull Request.
