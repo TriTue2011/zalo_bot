@@ -186,6 +186,21 @@ class ZaloServerBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._attr_device_info = get_device_info()
     @property
     def is_on(self) -> bool:
-        resp_status = getattr(self.coordinator, "login_success", False)
-        return resp_status
+        # Cảm biến này trả lời câu hỏi "máy chủ Zalo còn sống không", nên phải
+        # đọc server_reachable.
+        #
+        # Bản cũ trả về login_success. Coordinator vẫn tính server_reachable ở
+        # _async_update_data nhưng không ai dùng tới. Hậu quả: máy chủ đang chạy
+        # bình thường mà mật khẩu cấu hình sai — hoặc IP bị khoá vì vượt giới hạn
+        # 10 lần đăng nhập sai / 15 phút — thì cảm biến "Zalo Server" báo off.
+        # Automation nào dựa vào nó để biết máy chủ còn sống sẽ bị đánh lừa.
+        # Trạng thái đăng nhập đã có ZaloLoginBinarySensor lo.
+        return getattr(self.coordinator, "server_reachable", False)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "login_success": getattr(self.coordinator, "login_success", False),
+        }
+
     _attr_icon = "mdi:server"
