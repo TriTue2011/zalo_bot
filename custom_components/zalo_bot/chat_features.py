@@ -36,8 +36,12 @@ ZALO_COLORS = {
     "green": "c_15a85f",
 }
 
+# Bảng TextStyle của zca-js CHỈ có f_13 (Small) và f_18 (Big). "f_20" là mã
+# Zalo không biết: gửi lên coi như không có, nên H1 trước đây chỉ ra đậm chứ
+# không to hơn — người dùng gõ "# " và "## " nhận về kết quả y hệt nhau.
+# services/zalo_markdown.py bên chatgpt2api đã ghi lại đúng chuyện này.
 HEADING_STYLES = {
-    1: "f_20,b",   # H1: rất lớn + đậm
+    1: "f_18,b",   # H1: to nhất Zalo có + đậm
     2: "f_18,b",   # H2: lớn + đậm
     3: "b",        # H3: đậm (bình thường)
     4: "f_13",     # H4: nhỏ
@@ -257,7 +261,7 @@ def markdown_to_zalo_styles(text, style_override=None):
         for s in styles:
             tokens = s["st"].split(",")
             if "b" in tokens:
-                # Replace 'b' with the override (e.g. 'f_20,b' -> 'f_20,c_db342e,b')
+                # Replace 'b' with the override (e.g. 'f_18,b' -> 'f_18,c_db342e,b')
                 new_tokens = [override_token if t == "b" else t for t in tokens]
                 s["st"] = ",".join(new_tokens)
                 count += 1
