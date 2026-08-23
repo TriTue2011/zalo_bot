@@ -62,6 +62,20 @@ class ZaloLoginCoordinator(DataUpdateCoordinator):
         self.server_reachable = False
         self.login_success = False
 
+    async def _con_phien(self) -> bool:
+        """True nếu cookie phiên đang giữ vẫn còn được máy chủ chấp nhận."""
+        try:
+            async with self.session.get(
+                f"{self.zalo_server}/api/check-auth",
+                headers={"Accept": "application/json"},
+                timeout=aiohttp.ClientTimeout(total=5),
+            ) as resp:
+                if resp.status != 200:
+                    return False
+                return json.loads(await resp.text()).get("authenticated") is True
+        except (aiohttp.ClientError, ValueError, TimeoutError):
+            return False
+
     async def _async_update_data(self) -> dict[str, Any]:
         """Kiểm tra đăng nhập qua API."""
         self.server_reachable = False
@@ -69,27 +83,40 @@ class ZaloLoginCoordinator(DataUpdateCoordinator):
             try:
                 async with self.session.get(
                     f"{self.zalo_server}", 
-                    timeout=5
+                    timeout=aiohttp.ClientTimeout(total=5)
                 ) as resp:
                     self.server_reachable = True
             except:
                 self.login_success = False
                 return {"logged_in": False, "total": 0, "accounts": []}
+            # Hỏi xem phiên cũ còn dùng được không TRƯỚC khi đăng nhập lại.
+            #
+            # Bản cũ gửi POST /api/login mỗi 60 giây. Máy chủ băm mật khẩu bằng
+            # PBKDF2 600.000 vòng chạy đồng bộ (0,45 giây trên máy dev, 1,5–3
+            # giây trên máy ARM) và trong lúc băm thì event loop của Node đứng
+            # hình, không nhận được tin Zalo nào. Cookie phiên nằm trong cookie
+            # jar của chính coordinator này và máy chủ đặt hạn 30 ngày, nên hầu
+            # hết các lượt cập nhật không cần đăng nhập lại chút nào.
+            #
+            # Đăng nhập lại dồn dập còn ăn vào giới hạn 10 lần sai / 15 phút của
+            # máy chủ khi mật khẩu bị cấu hình sai.
             headers = {"Accept": "application/json", "Content-Type": "application/json"}
-            login_data = {"username": self.username, "password": self.password}
-            async with self.session.post(
-                f"{self.zalo_server}/api/login", 
-                json=login_data, 
-                headers=headers
-            ) as resp:
-                if resp.status != 200:
-                    self.login_success = False
-                    return {"logged_in": False, "total": 0, "accounts": []}
-                try:
-                    login_resp = json.loads(await resp.text())
-                    self.login_success = login_resp.get("success", False) is True
-                except:
-                    self.login_success = False
+            self.login_success = await self._con_phien()
+            if not self.login_success:
+                login_data = {"username": self.username, "password": self.password}
+                async with self.session.post(
+                    f"{self.zalo_server}/api/login",
+                    json=login_data,
+                    headers=headers
+                ) as resp:
+                    if resp.status != 200:
+                        self.login_success = False
+                        return {"logged_in": False, "total": 0, "accounts": []}
+                    try:
+                        login_resp = json.loads(await resp.text())
+                        self.login_success = login_resp.get("success", False) is True
+                    except (ValueError, aiohttp.ClientError):
+                        self.login_success = False
             async with self.session.get(
                 f"{self.zalo_server}/api/accounts",
                 headers={"Accept": "application/json"}

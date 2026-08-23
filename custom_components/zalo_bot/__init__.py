@@ -1,10 +1,10 @@
 """Zalo Bot integration."""
 import logging
 import os
-import requests
 from homeassistant.loader import async_get_loaded_integration
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
+from .server_session import ZaloServerSession, normalize_server_url
 from .const import (
     CONF_ENABLE_NOTIFICATIONS,
     CONF_MARKDOWN_COLOR,
@@ -119,7 +119,9 @@ _LOGGER = logging.getLogger(__name__)
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
-session = requests.Session()
+# Phiên thật được dựng trong async_setup_entry, khi đã biết địa chỉ máy chủ
+# và tài khoản quản trị.
+session = None
 zalo_server = None
 WWW_DIR = None
 PUBLIC_DIR = None
@@ -165,10 +167,9 @@ async def async_setup_entry(hass, entry):
 
     # Khởi tạo session và các biến toàn cục
     global session, zalo_server, WWW_DIR, PUBLIC_DIR
-    session = requests.Session()
 
     # Lấy thông tin cấu hình
-    zalo_server = config.get(CONF_ZALO_SERVER)
+    zalo_server = normalize_server_url(config.get(CONF_ZALO_SERVER))
     admin_user = config.get(CONF_USERNAME, "admin")
     admin_pass = config.get(CONF_PASSWORD, "admin")
 
@@ -179,6 +180,14 @@ async def async_setup_entry(hass, entry):
     if not zalo_server:
         _LOGGER.error("Không tìm thấy URL máy chủ Zalo Bot. Vui lòng kiểm tra cấu hình.")
         return False
+
+    # Phiên tự đặt hạn chờ cho mọi lời gọi và tự giữ trạng thái đăng nhập, thay
+    # cho requests.Session() trần. Xem server_session.py để biết vì sao.
+    # Dựng sau khi đã chắc có địa chỉ máy chủ, và đóng phiên cũ khi nạp lại
+    # entry (mỗi lần lưu tuỳ chọn là một lần nạp lại).
+    if session is not None:
+        session.close()
+    session = ZaloServerSession(zalo_server, admin_user, admin_pass)
 
     # Thiết lập đường dẫn thư mục
     config_dir = hass.config.path()
@@ -229,23 +238,14 @@ async def async_setup_entry(hass, entry):
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     def zalo_login():
-        try:
-            resp = session.post(f"{zalo_server}/api/login", json={
-                "username": admin_user,
-                "password": admin_pass
-            }, timeout=10)
-            if resp.status_code == 200 and resp.json().get("success"):
-                _LOGGER.info("Đăng nhập quản trị viên Zalo thành công")
-            else:
-                _LOGGER.error("Đăng nhập quản trị viên Zalo thất bại: %s", resp.text)
-        except Exception as err:
-            _LOGGER.error("Lỗi kết nối tới máy chủ Zalo: %s", err)
+        """Bảo đảm phiên đang đăng nhập, trước khi service gọi máy chủ.
 
-    try:
-        pass
-
-    except Exception:
-        pass
+        Trước đây hàm này gửi POST /api/login đầy đủ ở MỖI service. Máy chủ băm
+        mật khẩu bằng PBKDF2 600.000 vòng chạy đồng bộ, nên mỗi lần gửi một tin
+        nhắn là một nhịp máy chủ đứng hình. Nay chỉ đăng nhập lại khi phiên quá
+        hạn — hoặc khi máy chủ trả 401, do chính ZaloServerSession xử lý.
+        """
+        session.authenticate()
 
     async def send_message(call):
         return await chat_features.async_send_message_service(hass, call, zalo_login)
