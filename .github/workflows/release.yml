@@ -1,0 +1,89 @@
+# Tự cắt release khi manifest.json đổi version.
+#
+# HACS đọc GitHub Release, KHÔNG đọc manifest.json trên nhánh. Repo này từng
+# có version 2026.8.23.4 nằm trên main suốt nhiều ngày trong khi HACS vẫn chỉ
+# chào v2026.8.18.1, vì không ai cắt release — người dùng không có cách nào
+# nhận được bản vá.
+#
+# Workflow này đóng khoảng cách đó: cứ đẩy một thay đổi manifest.json lên main
+# là nó đọc version rồi tạo tag + release tương ứng.
+name: Cắt release khi đổi version
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'custom_components/zalo_bot/manifest.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Đọc version từ manifest
+        id: ver
+        run: |
+          v=$(jq -er '.version' custom_components/zalo_bot/manifest.json)
+          if [ -z "$v" ] || [ "$v" = "null" ]; then
+            echo "manifest.json không có version" >&2
+            exit 1
+          fi
+          echo "Version trong manifest: $v"
+          echo "v=$v" >> "$GITHUB_OUTPUT"
+
+      # Sửa manifest vì lý do khác (đổi documentation, thêm requirement) mà
+      # không đổi version thì dừng ở đây, thay vì hỏng với lỗi "tag đã tồn tại".
+      - name: Bỏ qua nếu tag đã có
+        id: check
+        run: |
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "Tag v${VERSION} đã tồn tại — không cắt release mới."
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=0" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          VERSION: ${{ steps.ver.outputs.v }}
+
+      # Ghi chú lấy từ các commit kể từ tag gần nhất. Không thay được ghi chú
+      # viết tay cho bản lớn, nhưng bảo đảm mọi bản đều CÓ ghi chú.
+      - name: Soạn ghi chú từ commit
+        if: steps.check.outputs.skip == '0'
+        id: notes
+        run: |
+          truoc=$(git tag --sort=-creatordate | head -1)
+          {
+            echo 'body<<GHICHU'
+            if [ -n "$truoc" ]; then
+              echo "Thay đổi kể từ \`${truoc}\`:"
+              echo
+              git log --no-merges --pretty='- %s' "${truoc}..HEAD"
+            else
+              echo "Bản phát hành đầu tiên."
+            fi
+            echo
+            echo "---"
+            echo "Cài hoặc cập nhật qua HACS. Nhớ khởi động lại Home Assistant sau khi tải."
+            echo 'GHICHU'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Tạo release
+        if: steps.check.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.ver.outputs.v }}
+          BODY: ${{ steps.notes.outputs.body }}
+        run: |
+          gh release create "v${VERSION}" \
+            --title "v${VERSION}" \
+            --notes "${BODY}" \
+            --target "${GITHUB_SHA}"
+          echo "Đã cắt release v${VERSION}"
