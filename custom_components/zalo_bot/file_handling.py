@@ -229,8 +229,12 @@ def copy_to_public(src_path, zalo_server):  # pylint: disable=unused-argument
     # Tạo URL đầy đủ
     is_local_server = ("localhost" in zalo_server or "127.0.0.1" in zalo_server)
     if is_local_server:
-        # Nếu server chạy local, tạo URL đầy đủ
-        full_url = f"{zalo_server}/{filename}"
+        # Tệp vừa chép nằm ở /config/www/zalo_bot, và add-on phơi đúng thư mục
+        # đó ra tiền tố /zalo_bot. Trỏ vào gốc máy chủ ("{zalo_server}/{filename}")
+        # thì add-on coi đó là route cần đăng nhập, trả 200 kèm HTML trang
+        # admin-login; bên kia lưu lại thành .jpg rồi gửi lên Zalo, người nhận
+        # thấy một ô đen. Phải đi qua tiền tố /zalo_bot.
+        full_url = f"{zalo_server}/zalo_bot/{filename}"
         _LOGGER.info("Đã sao chép ảnh từ %s đến %s, URL truy cập đầy đủ: %s", 
                   src_path, dst_path, full_url)
         return full_url
