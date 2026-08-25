@@ -157,47 +157,6 @@ def serve_file_temporarily(file_path, duration=60):
     return url
 
 
-def get_video_duration_ms(video_path):
-    """
-    Lấy duration chính xác của video bằng ffprobe
-
-    Args:
-        video_path: Đường dẫn đến file video
-
-    Returns:
-        int: Duration tính bằng milliseconds
-    """
-    if not os.path.isfile(video_path):
-        _LOGGER.warning(f"Video file not found: {video_path}")
-        return 10000
-
-    try:
-        import subprocess
-        import json
-        cmd = [
-            'ffprobe', '-v', 'quiet', '-print_format', 'json',
-            '-show_format', video_path
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-
-        if result.returncode == 0:
-            data = json.loads(result.stdout)
-            duration_seconds = float(data['format']['duration'])
-            duration_ms = max(int(duration_seconds * 1000), 1000)
-            _LOGGER.info(
-                f"ffprobe detected duration: {duration_seconds:.2f}s = "
-                f"{duration_ms}ms for {os.path.basename(video_path)}"
-            )
-            return duration_ms
-        else:
-            _LOGGER.warning(f"ffprobe failed for {video_path}: {result.stderr}")
-            return 10000
-
-    except Exception as e:
-        _LOGGER.warning(f"ffprobe error for {video_path}: {e}")
-        return 10000
-
-
 def copy_to_public(src_path, zalo_server):  # pylint: disable=unused-argument
     """
     Sao chép tệp vào thư mục public và trả về đường dẫn URL tương đối

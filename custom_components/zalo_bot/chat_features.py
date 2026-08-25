@@ -3,7 +3,7 @@ import logging
 import os
 import asyncio
 from .const import DOMAIN
-from .file_handling import serve_file_temporarily, copy_to_public, get_video_duration_ms
+from .file_handling import serve_file_temporarily, copy_to_public
 from .notification import show_result_notification
 
 _LOGGER = logging.getLogger(__name__)
@@ -530,22 +530,10 @@ async def async_send_video_service(hass, call, zalo_login):
                 _LOGGER.warning("Không tìm thấy thumbnail file: %s, dùng URL video làm thumbnail", thumbnail_url)
                 thumbnail_url = public_url
 
-        if video_path.startswith("http://") or video_path.startswith("https://"):
-            duration = 10000
-        else:
-            try:
-                duration = await hass.async_add_executor_job(
-                    get_video_duration_ms, video_path
-                )
-                _LOGGER.info(f"Auto-detect video duration: {duration}ms từ file {video_path}")
-            except Exception as e:
-                _LOGGER.warning(f"Không thể auto-detect duration từ {video_path}: {e}, dùng 10000ms")
-                duration = 10000
         options = {
             "videoUrl": public_url,
             "thumbnailUrl": thumbnail_url,
             "msg": call.data.get("message", ""),
-            "duration": int(duration),
             "width": int(call.data.get("width", 1280)),
             "height": int(call.data.get("height", 720)),
             "ttl": int(call.data.get("ttl", 0))
