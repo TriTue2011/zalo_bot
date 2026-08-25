@@ -534,7 +534,9 @@ async def async_send_video_service(hass, call, zalo_login):
             duration = 10000
         else:
             try:
-                duration = get_video_duration_ms(video_path)
+                duration = await hass.async_add_executor_job(
+                    get_video_duration_ms, video_path
+                )
                 _LOGGER.info(f"Auto-detect video duration: {duration}ms từ file {video_path}")
             except Exception as e:
                 _LOGGER.warning(f"Không thể auto-detect duration từ {video_path}: {e}, dùng 10000ms")
