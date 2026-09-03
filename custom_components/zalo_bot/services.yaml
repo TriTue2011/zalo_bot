@@ -845,14 +845,14 @@ get_group_chat_history:
       selector:
         text:
     count:
-      description: Số lượng tin nhắn muốn lấy (mặc định 50, tối đa 200)
+      description: Số lượng tin nhắn muốn lấy (mặc định 50, tối đa 1000)
       example: 50
       required: false
       default: 50
       selector:
         number:
           min: 1
-          max: 200
+          max: 1000
     account_selection:
       description: Số điện thoại hoặc ID tài khoản
       example: "+84123456789"

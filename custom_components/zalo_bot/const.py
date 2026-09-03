@@ -267,7 +267,9 @@ SERVICE_GET_ALL_GROUPS_SCHEMA = vol.Schema({
 
 SERVICE_GET_GROUP_CHAT_HISTORY_SCHEMA = vol.Schema({
     vol.Required("group_id"): cv.string,
-    vol.Optional("count", default=50): vol.All(int, vol.Range(min=1, max=200)),
+    # Trần 1000 cho khớp add-on: kho lịch sử nhóm giữ tới 5000 tin, chặn ở 200
+    # thì phần còn lại không có cách nào lấy ra.
+    vol.Optional("count", default=50): vol.All(int, vol.Range(min=1, max=1000)),
     vol.Required("account_selection"): cv.string,
 })
 
