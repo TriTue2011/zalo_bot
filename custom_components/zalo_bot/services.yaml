@@ -703,12 +703,28 @@ change_group_avatar:
         text:
 
 send_voice:
-  description: Gửi tin nhắn thoại
+  description: "Gửi tin nhắn thoại: từ tệp âm thanh, hoặc để TTS của Home Assistant đọc chữ"
   fields:
     voice_path:
-      description: Đường dẫn đến file âm thanh
+      description: "Tệp âm thanh: đường dẫn trong HA, URL http(s):// hoặc media-source://. Bỏ trống nếu dùng message"
       example: "/config/www/voice.mp3"
-      required: true
+      selector:
+        text:
+    message:
+      description: "Chữ để TTS của Home Assistant đọc thành tin thoại (thay cho voice_path)"
+      example: "Cửa chính đang mở quá mười phút"
+      selector:
+        text:
+          multiline: true
+    tts_entity:
+      description: "Thực thể TTS dùng để đọc (bỏ trống = TTS mặc định)"
+      example: "tts.google_translate_vi_com"
+      selector:
+        entity:
+          domain: tts
+    language:
+      description: "Ngôn ngữ đọc, ví dụ vi (bỏ trống = mặc định của TTS)"
+      example: "vi"
       selector:
         text:
     thread_id:

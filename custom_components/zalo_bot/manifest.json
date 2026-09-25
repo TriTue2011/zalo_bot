@@ -1,6 +1,10 @@
 {
   "domain": "zalo_bot",
   "name": "Zalo Bot",
+  "after_dependencies": [
+    "media_source",
+    "tts"
+  ],
   "codeowners": [
     "@TriTue2011"
   ],
@@ -14,5 +18,5 @@
     "requests"
   ],
   "single_config_entry": true,
-  "version": "2026.9.25"
+  "version": "2026.9.25.1"
 }

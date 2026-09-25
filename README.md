@@ -17,7 +17,7 @@ báo, gọi service và xây automation qua Zalo cá nhân.
 
 ## Phiên bản và cập nhật
 
-- Custom integration hiện tại: **2026.9.25**.
+- Custom integration hiện tại: **2026.9.25.1**.
 - Add-on/gateway tương thích: **2026.8.23.3** hoặc mới hơn; muốn `send_voice`
   ra **bong bóng tin thoại** thì cần **2026.9.25.0** trở lên.
 
@@ -320,44 +320,27 @@ data:
 > nên tệp trong mạng nhà hay URL nội bộ đều **không nghe được** khi người nhận ở
 > ngoài.
 
-**Đọc chữ thành tin thoại (TTS).** Home Assistant có sẵn API trả URL tệp đọc của
-bất kỳ dịch vụ TTS nào. Khai một `rest_command` trong `configuration.yaml`:
+**Đọc chữ thành tin thoại bằng TTS có sẵn của Home Assistant.** Thay
+`voice_path` bằng `message`, chọn thực thể TTS như khi dùng `tts.speak`:
 
 ```yaml
-rest_command:
-  zalo_tts_url:
-    url: "http://127.0.0.1:8123/api/tts_get_url"
-    method: POST
-    headers:
-      Authorization: !secret ha_bearer_token   # "Bearer <long-lived access token>"
-    content_type: "application/json"
-    payload: '{"engine_id": "{{ engine }}", "message": {{ message | tojson }}}'
+action: zalo_bot.send_voice
+data:
+  account_selection: "84901234567"
+  thread_id: "5841349563795164131"
+  type: "0"
+  message: "Cửa chính đang mở quá mười phút"
+  tts_entity: tts.google_translate_vi_com   # thực thể TTS của bạn; bỏ trống = TTS mặc định
+  language: vi                             # tuỳ chọn
 ```
 
-- `ha_bearer_token` trong `secrets.yaml` có dạng `"Bearer eyJ..."`; tạo token ở
-  **Hồ sơ → Bảo mật → Mã truy cập dài hạn**.
-- `127.0.0.1:8123` đúng khi Home Assistant chạy trên máy (HA OS, Supervised,
-  Docker mạng host). Khác thì thay bằng địa chỉ HA.
-
-Rồi dùng trong automation:
-
-```yaml
-- action: rest_command.zalo_tts_url
-  data:
-    engine: tts.google_translate_vi_com    # thực thể TTS của bạn (Cài đặt → Thực thể, lọc "tts.")
-    message: "Cửa chính đang mở quá mười phút"
-  response_variable: tts
-- action: zalo_bot.send_voice
-  data:
-    account_selection: "84901234567"
-    thread_id: "5841349563795164131"
-    type: "0"
-    voice_path: "{{ tts.content.url }}"
-```
-
-URL này nằm trên địa chỉ nội bộ của Home Assistant (**Cài đặt → Hệ thống → Mạng
-→ URL mạng cục bộ**); gateway phải gọi được tới đó. Người nhận ở đâu cũng nghe
-được vì gateway đã tải lên máy chủ Zalo.
+- Chỉ dùng **một** trong hai: `voice_path` hoặc `message`.
+- Dùng được mọi TTS đã cài trong HA (Google Translate, Piper, OpenAI, TTS của
+  gateway chatgpt2api…). Lấy tên thực thể ở **Cài đặt → Thực thể**, lọc `tts.`.
+- `voice_path` cũng nhận `media-source://…` (tệp trong thư viện **Media** của HA).
+- Tích hợp đưa gateway một URL `/api/tts_proxy/…` trên **URL mạng cục bộ** của HA
+  (**Cài đặt → Hệ thống → Mạng**); gateway phải gọi được tới đó. Người nhận ở đâu
+  cũng nghe được vì gateway đã tải tiếng lên máy chủ Zalo.
 
 ### Sticker, liên kết, danh thiếp
 
@@ -458,7 +441,7 @@ Sinh từ `services.yaml` và schema của tích hợp. Cột **Cần điền** 
 | `zalo_bot.send_image` | Gửi ảnh Zalo | `image_path`, `thread_id`, `account_selection` | `message`, `type`, `ttl` |
 | `zalo_bot.send_file` | Gửi một file bất kỳ qua URL hoặc từ đường dẫn cục bộ | `file_path_or_url`, `thread_id`, `account_selection` | `message`, `type`, `ttl` |
 | `zalo_bot.send_video` | Gửi video qua URL hoặc từ đường dẫn cục bộ | `thread_id`, `video_path_or_url`, `account_selection` | `thumbnail_url`, `message`, `width`, `height`, `ttl`, `type` |
-| `zalo_bot.send_voice` | Gửi tin nhắn thoại | `voice_path`, `thread_id`, `account_selection` | `type` |
+| `zalo_bot.send_voice` | Gửi tin nhắn thoại: từ tệp âm thanh, hoặc để TTS của Home Assistant đọc chữ | `thread_id`, `account_selection`, và **một** trong `voice_path` / `message` | `tts_entity`, `language`, `type` |
 | `zalo_bot.send_sticker` | Gửi sticker | `sticker_id`, `thread_id`, `account_selection` | `type` |
 | `zalo_bot.send_link` | Gửi một tin nhắn chứa liên kết có preview | `thread_id`, `link`, `account_selection` | `message`, `thumbnail`, `type` |
 | `zalo_bot.send_card` | Gửi danh thiếp của một người dùng | `thread_id`, `user_id`, `account_selection` | `type` |
@@ -784,6 +767,12 @@ Hai cảm biến cập nhật **mỗi 60 giây**.
 - Thêm/xóa cuộc trò chuyện khỏi nhãn
 
 ---
+
+## Có gì mới ở 2026.9.25.1
+
+- **`send_voice` đọc chữ bằng TTS có sẵn của Home Assistant**: thêm `message`,
+  `tts_entity`, `language`. Không còn phải tự khai `rest_command` và token.
+- `voice_path` nhận thêm `media-source://…`.
 
 ## Có gì mới ở 2026.9.25
 

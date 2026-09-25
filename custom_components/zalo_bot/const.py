@@ -238,12 +238,17 @@ SERVICE_CHANGE_GROUP_AVATAR_SCHEMA = vol.Schema({
     vol.Required("account_selection"): cv.string,
 })
 
-SERVICE_SEND_VOICE_SCHEMA = vol.Schema({
-    vol.Required("voice_path"): cv.string,
+# Nguon tieng: MOT trong hai — tep/URL/media-source co san, hoac chu de TTS cua
+# Home Assistant doc (khong can rest_command hay token).
+SERVICE_SEND_VOICE_SCHEMA = vol.All(vol.Schema({
+    vol.Exclusive("voice_path", "nguon_tieng"): cv.string,
+    vol.Exclusive("message", "nguon_tieng"): cv.string,
+    vol.Optional("tts_entity"): cv.entity_id,
+    vol.Optional("language"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): thread_type,
-})
+}), cv.has_at_least_one_key("voice_path", "message"))
 
 SERVICE_GET_ALL_FRIENDS_SCHEMA = vol.Schema({
     vol.Required("account_selection"): cv.string,

@@ -627,14 +627,31 @@ async def async_send_sticker_service(hass, call, zalo_login):
         await show_result_notification(hass, "gửi sticker", None, error=e)
         return {"error": str(e)}
 
+async def _url_media_source(hass, media_id):
+    """media-source://... -> URL day du gateway tai duoc (TTS, thu vien Media)."""
+    from homeassistant.components import media_source
+    from homeassistant.helpers.network import get_url
+
+    url = (await media_source.async_resolve_media(hass, media_id, None)).url
+    return get_url(hass) + url if url.startswith("/") else url
+
+
 async def async_send_voice_service(hass, call, zalo_login):
     """Dịch vụ gửi tin nhắn thoại."""
     _LOGGER.debug("Dịch vụ async_send_voice được gọi với: %s", call.data)
     try:
         await hass.async_add_executor_job(zalo_login)
-        voice_path = call.data["voice_path"]
+        voice_path = call.data.get("voice_path", "")
+        if call.data.get("message"):
+            # Doc bang TTS co san cua Home Assistant (tts.speak dung chung may nay).
+            from homeassistant.components import tts
+            voice_path = tts.generate_media_source_id(
+                hass, call.data["message"], engine=call.data.get("tts_entity"),
+                language=call.data.get("language"), cache=True)
         voice_url = voice_path
-        if not voice_path.startswith(("http://", "https://")):
+        if voice_path.startswith("media-source://"):
+            voice_url = await _url_media_source(hass, voice_path)
+        elif not voice_path.startswith(("http://", "https://")):
             if os.path.isfile(voice_path):
                 voice_url = await hass.async_add_executor_job(
                     serve_file_temporarily, voice_path
