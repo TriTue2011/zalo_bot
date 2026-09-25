@@ -69,7 +69,7 @@ async def async_get_list_reminder_service(hass, call, zalo_login):
     try:
         await hass.async_add_executor_job(zalo_login)
         reminder_type = call.data.get("type", "0")
-        reminder_type_num = 1 if reminder_type.lower() == "group" else 0
+        reminder_type_num = 1 if reminder_type == "1" else 0
         payload = {
             "accountSelection": call.data["account_selection"],
             "threadId": call.data["thread_id"],

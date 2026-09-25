@@ -1552,6 +1552,17 @@ send_card:
       required: true
       selector:
         text:
+    type:
+      description: "Loại gửi: 0=user, 1=group (mặc định 0)"
+      example: 0
+      default: 0
+      selector:
+        select:
+          options:
+            - label: "User"
+              value: "0"
+            - label: "Group"
+              value: "1"
 
 send_link:
   description: Gửi một tin nhắn chứa liên kết có preview
@@ -1585,6 +1596,17 @@ send_link:
       required: true
       selector:
         text:
+    type:
+      description: "Loại gửi: 0=user, 1=group (mặc định 0)"
+      example: 0
+      default: 0
+      selector:
+        select:
+          options:
+            - label: "User"
+              value: "0"
+            - label: "Group"
+              value: "1"
 
 get_stickers:
   description: Tìm kiếm sticker theo từ khóa

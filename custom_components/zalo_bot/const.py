@@ -17,6 +17,22 @@ def zca_safe_integer(value: object) -> int:
         raise vol.Invalid("ID nam ngoai khoang so an toan cua zca-js")
     return number
 
+
+def thread_type(value: object) -> str:
+    """Loai hoi thoai: nhan ca 0/1 lan user/group, tra "0" (nguoi) hoac "1" (nhom).
+
+    Truoc day nua so dich vu doi "0"/"1", nua kia doi "user"/"group", va dich vu
+    nao cung am tham coi gia tri la la "nguoi" — go nham kieu la tin di sai cho
+    ma khong bao loi. Nay moi dich vu dung chung bo kiem nay, giong
+    normalizeThreadType cua gateway.
+    """
+    v = str(value).strip().lower()
+    if v in ("0", "user"):
+        return "0"
+    if v in ("1", "group"):
+        return "1"
+    raise vol.Invalid('type phai la 0/"user" (nguoi) hoac 1/"group" (nhom)')
+
 # Configuration constants
 CONF_ZALO_SERVER = "zalo_server"
 CONF_USERNAME = "username"
@@ -39,7 +55,7 @@ SERVICE_SEND_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("message"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
     vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
     vol.Optional("quote"): vol.Schema({
         vol.Required("content"): vol.Any(dict, cv.string),
@@ -54,7 +70,7 @@ SERVICE_SEND_FILE_SCHEMA = vol.Schema({
     vol.Optional("message"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
     vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
 })
 
@@ -63,7 +79,7 @@ SERVICE_SEND_IMAGE_SCHEMA = vol.Schema({
     vol.Optional("message"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
     vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
 })
 
@@ -183,14 +199,15 @@ SERVICE_SEND_STICKER_SCHEMA = vol.Schema({
     vol.Required("sticker_id"): zca_safe_integer,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_UNDO_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("msg_id"): cv.string,
+    vol.Optional("cli_msg_id"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_CREATE_REMINDER_SCHEMA = vol.Schema({
@@ -199,14 +216,14 @@ SERVICE_CREATE_REMINDER_SCHEMA = vol.Schema({
     vol.Required("remind_time"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_REMOVE_REMINDER_SCHEMA = vol.Schema({
     vol.Required("reminder_id"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_CHANGE_GROUP_NAME_SCHEMA = vol.Schema({
@@ -225,7 +242,7 @@ SERVICE_SEND_VOICE_SCHEMA = vol.Schema({
     vol.Required("voice_path"): cv.string,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_GET_ALL_FRIENDS_SCHEMA = vol.Schema({
@@ -334,12 +351,14 @@ SERVICE_SET_MUTE_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("duration"): cv.string,
     vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_SET_PINNED_CONVERSATION_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("pinned"): cv.boolean,
     vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 # Các schema cho API mới bổ sung thêm
@@ -408,7 +427,7 @@ SERVICE_ADD_REACTION_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("msg_id"): cv.string,
     vol.Required("cli_msg_id"): cv.string,
-    vol.Required("type"): cv.string,
+    vol.Required("type"): thread_type,
     vol.Required("account_selection"): cv.string,
 })
 
@@ -417,7 +436,7 @@ SERVICE_DELETE_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("msg_id"): cv.string,
     vol.Required("cli_msg_id"): cv.string,
     vol.Required("uid_from"): cv.string,
-    vol.Required("type"): cv.string,
+    vol.Required("type"): thread_type,
     vol.Optional("only_me", default=True): cv.boolean,
     vol.Required("account_selection"): cv.string,
 })
@@ -426,6 +445,7 @@ SERVICE_FORWARD_MESSAGE_SCHEMA = vol.Schema({
     vol.Required("message"): cv.string,
     vol.Required("thread_ids"): cv.string,
     vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_PARSE_LINK_SCHEMA = vol.Schema({
@@ -437,6 +457,7 @@ SERVICE_SEND_CARD_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("user_id"): cv.string,
     vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_SEND_LINK_SCHEMA = vol.Schema({
@@ -445,6 +466,7 @@ SERVICE_SEND_LINK_SCHEMA = vol.Schema({
     vol.Optional("message", default=""): cv.string,
     vol.Optional("thumbnail", default=""): cv.string,
     vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_GET_STICKERS_SCHEMA = vol.Schema({
@@ -465,7 +487,7 @@ SERVICE_SEND_VIDEO_SCHEMA = vol.Schema({
     vol.Optional("width", default=1280): cv.positive_int,
     vol.Optional("height", default=720): cv.positive_int,
     vol.Optional("ttl", default=0): vol.All(int, vol.Range(min=0)),
-    vol.Optional("type", default="0"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
     vol.Required("account_selection"): cv.string,
 })
 
@@ -521,6 +543,7 @@ SERVICE_GET_REMINDER_SCHEMA = vol.Schema({
 SERVICE_GET_LIST_REMINDER_SCHEMA = vol.Schema({
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
+    vol.Optional("type", default="0"): thread_type,
 })
 
 SERVICE_GET_REMINDER_RESPONSES_SCHEMA = vol.Schema({
@@ -567,6 +590,8 @@ SERVICE_CHANGE_ACCOUNT_AVATAR_SCHEMA = vol.Schema({
 
 SERVICE_GET_AVATAR_LIST_SCHEMA = vol.Schema({
     vol.Required("account_selection"): cv.string,
+    vol.Optional("count"): cv.positive_int,
+    vol.Optional("page"): cv.positive_int,
 })
 
 SERVICE_LAST_ONLINE_SCHEMA = vol.Schema({

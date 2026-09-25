@@ -646,7 +646,8 @@ async def async_send_voice_service(hass, call, zalo_login):
             "accountSelection": call.data["account_selection"],
             "options": {
                 "voiceUrl": voice_url
-            }
+            },
+            "type": 1 if call.data.get("type", "0") == "1" else 0,
         }
         resp = await hass.async_add_executor_job(
             lambda: session.post(f"{zalo_server}/api/sendVoiceByAccount", json=payload)

@@ -52,7 +52,7 @@ async def async_create_reminder_service(hass, call, zalo_login):
         payload = {
             "threadId": call.data["thread_id"],
             "accountSelection": call.data["account_selection"],
-            "type": call.data.get("type", "0"),
+            "type": 1 if call.data.get("type", "0") == "1" else 0,
             "options": {
                 "title": call.data["title"],
                 "content": call.data["content"],
@@ -82,7 +82,7 @@ async def async_remove_reminder_service(hass, call, zalo_login):
             "reminderId": call.data["reminder_id"],
             "threadId": call.data["thread_id"],
             "accountSelection": call.data["account_selection"],
-            "type": call.data.get("type", "0")
+            "type": 1 if call.data.get("type", "0") == "1" else 0
         }
         resp = await hass.async_add_executor_job(
             lambda: session.post(f"{zalo_server}/api/removeReminderByAccount", json=payload)
@@ -130,7 +130,7 @@ async def async_set_mute_service(hass, call, zalo_login):
         duration = int(call.data.get("duration", 0))
         action = "mute" if duration > 0 else "unmute"
         mute_type = call.data.get("type", "0")
-        mute_type_num = 1 if mute_type.lower() == "group" else 0
+        mute_type_num = 1 if mute_type == "1" else 0
         payload = {
             "params": {
                 "action": action,
@@ -165,7 +165,7 @@ async def async_set_pinned_conversation_service(hass, call, zalo_login):
         pinned_str = str(call.data.get("pinned", "true")).lower()
         pinned = pinned_str == "true" or pinned_str == "1" or pinned_str == "yes"
         conv_type = call.data.get("type", "0")
-        conv_type_num = 1 if conv_type.lower() == "group" else 0
+        conv_type_num = 1 if conv_type == "1" else 0
         payload = {
             "accountSelection": call.data["account_selection"],
             "pinned": pinned,
@@ -497,7 +497,7 @@ async def async_add_reaction_service(hass, call, zalo_login):
         except ValueError:
             msg_id = call.data["msg_id"]
             cli_msg_id = call.data["cli_msg_id"]
-        reaction_type = 1 if call.data["type"].lower() == "group" else 0
+        reaction_type = 1 if call.data["type"] == "1" else 0
         reaction_icon = call.data["icon"].lower()
         reaction_map = {
             "like": "/-strong",
@@ -567,7 +567,7 @@ async def async_delete_message_service(hass, call, zalo_login):
     _LOGGER.debug("Dịch vụ async_delete_message được gọi với: %s", call.data)
     try:
         await hass.async_add_executor_job(zalo_login)
-        message_type = 1 if call.data["type"].lower() == "group" else 0
+        message_type = 1 if call.data["type"] == "1" else 0
         payload = {
             "accountSelection": call.data["account_selection"],
             "dest": {
@@ -606,7 +606,7 @@ async def async_forward_message_service(hass, call, zalo_login):
         thread_ids = call.data["thread_ids"].split(",")
         thread_ids = [tid.strip() for tid in thread_ids]
         msg_type = call.data.get("type", "0")
-        msg_type_num = 1 if msg_type.lower() == "group" else 0
+        msg_type_num = 1 if msg_type == "1" else 0
         payload = {
             "accountSelection": call.data["account_selection"],
             "params": {
@@ -666,7 +666,8 @@ async def async_send_card_service(hass, call, zalo_login):
             "accountSelection": call.data["account_selection"],
             "options": {
                 "userId": call.data["user_id"]
-            }
+            },
+            "type": 1 if call.data.get("type", "0") == "1" else 0,
         }
         resp = await hass.async_add_executor_job(
             lambda: session.post(f"{zalo_server}/api/sendCardByAccount", json=payload)
@@ -698,7 +699,8 @@ async def async_send_link_service(hass, call, zalo_login):
         payload = {
             "threadId": call.data["thread_id"],
             "accountSelection": call.data["account_selection"],
-            "options": options
+            "options": options,
+            "type": 1 if call.data.get("type", "0") == "1" else 0,
         }
         resp = await hass.async_add_executor_job(
             lambda: session.post(f"{zalo_server}/api/sendLinkByAccount", json=payload)
