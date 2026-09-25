@@ -647,7 +647,8 @@ async def async_send_voice_service(hass, call, zalo_login):
             from homeassistant.components import tts
             voice_path = tts.generate_media_source_id(
                 hass, call.data["message"], engine=call.data.get("tts_entity"),
-                language=call.data.get("language"), cache=True)
+                language=call.data.get("language"),
+                options=call.data.get("options"), cache=True)
         voice_url = voice_path
         if voice_path.startswith("media-source://"):
             voice_url = await _url_media_source(hass, voice_path)

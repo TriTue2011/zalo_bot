@@ -17,7 +17,7 @@ báo, gọi service và xây automation qua Zalo cá nhân.
 
 ## Phiên bản và cập nhật
 
-- Custom integration hiện tại: **2026.9.25.1**.
+- Custom integration hiện tại: **2026.9.25.2**.
 - Add-on/gateway tương thích: **2026.8.23.3** hoặc mới hơn; muốn `send_voice`
   ra **bong bóng tin thoại** thì cần **2026.9.25.0** trở lên.
 
@@ -332,9 +332,16 @@ data:
   message: "Cửa chính đang mở quá mười phút"
   tts_entity: tts.google_translate_vi_com   # thực thể TTS của bạn; bỏ trống = TTS mặc định
   language: vi                             # tuỳ chọn
+  options:                                 # tuỳ chọn — giống mục "Options" của tts.speak
+    voice: nova
 ```
 
 - Chỉ dùng **một** trong hai: `voice_path` hoặc `message`.
+- `tts_entity`, `language`, `options` dùng **y như** `tts.speak`: đọc được bằng
+  `tts.speak` với TTS nào thì gửi tin thoại được với TTS đó. Khoá trong `options`
+  (giọng đọc, tốc độ…) **tuỳ từng TTS** — mở `tts.speak` ở Công cụ nhà phát triển,
+  chọn TTS đó, xem mục **Options** và tài liệu của nó. Ghi khoá TTS không hỗ trợ
+  thì HA báo lỗi và không gửi gì.
 - Dùng được mọi TTS đã cài trong HA (Google Translate, Piper, OpenAI, TTS của
   gateway chatgpt2api…). Lấy tên thực thể ở **Cài đặt → Thực thể**, lọc `tts.`.
 - `voice_path` cũng nhận `media-source://…` (tệp trong thư viện **Media** của HA).
@@ -441,7 +448,7 @@ Sinh từ `services.yaml` và schema của tích hợp. Cột **Cần điền** 
 | `zalo_bot.send_image` | Gửi ảnh Zalo | `image_path`, `thread_id`, `account_selection` | `message`, `type`, `ttl` |
 | `zalo_bot.send_file` | Gửi một file bất kỳ qua URL hoặc từ đường dẫn cục bộ | `file_path_or_url`, `thread_id`, `account_selection` | `message`, `type`, `ttl` |
 | `zalo_bot.send_video` | Gửi video qua URL hoặc từ đường dẫn cục bộ | `thread_id`, `video_path_or_url`, `account_selection` | `thumbnail_url`, `message`, `width`, `height`, `ttl`, `type` |
-| `zalo_bot.send_voice` | Gửi tin nhắn thoại: từ tệp âm thanh, hoặc để TTS của Home Assistant đọc chữ | `thread_id`, `account_selection`, và **một** trong `voice_path` / `message` | `tts_entity`, `language`, `type` |
+| `zalo_bot.send_voice` | Gửi tin nhắn thoại: từ tệp âm thanh, hoặc để TTS của Home Assistant đọc chữ | `thread_id`, `account_selection`, và **một** trong `voice_path` / `message` | `tts_entity`, `language`, `options`, `type` |
 | `zalo_bot.send_sticker` | Gửi sticker | `sticker_id`, `thread_id`, `account_selection` | `type` |
 | `zalo_bot.send_link` | Gửi một tin nhắn chứa liên kết có preview | `thread_id`, `link`, `account_selection` | `message`, `thumbnail`, `type` |
 | `zalo_bot.send_card` | Gửi danh thiếp của một người dùng | `thread_id`, `user_id`, `account_selection` | `type` |
@@ -767,6 +774,11 @@ Hai cảm biến cập nhật **mỗi 60 giây**.
 - Thêm/xóa cuộc trò chuyện khỏi nhãn
 
 ---
+
+## Có gì mới ở 2026.9.25.2
+
+- `send_voice` có thêm `options` — tuỳ chọn riêng của TTS như chọn giọng đọc,
+  giống mục **Options** của `tts.speak`.
 
 ## Có gì mới ở 2026.9.25.1
 

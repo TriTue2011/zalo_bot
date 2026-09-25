@@ -727,6 +727,11 @@ send_voice:
       example: "vi"
       selector:
         text:
+    options:
+      description: "Tuỳ chọn riêng của TTS, giống mục Options của tts.speak — ví dụ giọng đọc: {voice: ...}"
+      example: '{"voice": "nova"}'
+      selector:
+        object:
     thread_id:
       description: ThreadId nhận tin nhắn thoại
       example: "5841349563795164131"

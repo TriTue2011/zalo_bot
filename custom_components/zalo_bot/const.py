@@ -245,6 +245,7 @@ SERVICE_SEND_VOICE_SCHEMA = vol.All(vol.Schema({
     vol.Exclusive("message", "nguon_tieng"): cv.string,
     vol.Optional("tts_entity"): cv.entity_id,
     vol.Optional("language"): cv.string,
+    vol.Optional("options"): dict,
     vol.Required("thread_id"): cv.string,
     vol.Required("account_selection"): cv.string,
     vol.Optional("type", default="0"): thread_type,
